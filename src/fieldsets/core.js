@@ -239,6 +239,8 @@ export class Fieldset {
 
         Object.assign(fieldsetSpec, options)
 
+        let required = schema.required || []
+
         if(schema.hasOwnProperty('properties')) {
             schema = schema.properties
         }
@@ -273,7 +275,9 @@ export class Fieldset {
                 fieldId,
                 fieldName,
                 fieldSchema,
-                fieldOptions
+                fieldOptions,
+                null,
+                required.indexOf(fieldName) >= 0
             )
 
             if(field) {

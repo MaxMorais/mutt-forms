@@ -110,17 +110,26 @@ export class ObjectField extends Field {
     * Validate the form field
     */
     validate() {
-        let valid = true
-
-        for(let key of Object.keys(this.object)) {
-            let field = this.object[key]
-            if(!field.validate()) {
-                this._errors[key] = field.errors
-                valid = false
-            }
+        // if this is required ensure there is a value set
+        if(!super.validate()) {
+            return false
         }
 
-        return valid
+        // if there a value, validate the children
+        // if there is no value it means this field must be optional
+        // TODO: this condition is not sufficient to figure out if the object is empty or not
+        if(this.value) {
+            let valid = true
+            for(let key of Object.keys(this.object)) {
+                let field = this.object[key]
+                if(!field.validate()) {
+                    this._errors[key] = field.errors
+                    valid = false
+                }
+            }
+            return valid
+        }
+        return true
     }
 
     /**
