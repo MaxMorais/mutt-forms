@@ -30,12 +30,28 @@ export class Validator {
 export class RequiredValidator extends Validator {
 
     validate(value) {
+        let valid = true
         if(!value && (value !== 0)) {
-            this.error = this.messages.required
-            return false
+            valid = false
+        } else if(typeof value === 'object') {
+            if(Object.keys(value).length === 0) {
+                valid = false
+            } else {
+                valid = false
+                for(let key of Object.keys(value)) {
+                    // this is only invalid if all children are invalid (ie empty)
+                    if(this.validate(value[key])) {
+                        valid = true
+                        break
+                    }
+                }
+            }
         }
 
-        return true
+        if(!valid) {
+            this.error = this.messages.required
+        }
+        return valid
     }
 }
 

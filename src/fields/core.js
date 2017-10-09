@@ -125,13 +125,21 @@ export class Field {
     }
 
     /**
+    * Check if field is non-empty
+    * @returns {Boolean} if the field has a non-empty value
+    */
+    isEmpty() {
+        return !this.value || (this.value == 0)
+    }
+
+
+    /**
     * Render the form field using it's widget interface
     * @returns {DocumentFragment} rendered HTML widget
     */
     render() {
         return this.widget.render()
     }
-
     /**
     * Destroy the rendered widget
     * @returns the success or failure response

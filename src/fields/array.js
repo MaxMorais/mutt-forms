@@ -272,4 +272,25 @@ export class ArrayField extends Field {
     set errors(error) {
         this._errors = error
     }
+
+    /**
+    * Check if field is non-empty
+    * @returns {Boolean} if the field has a non-empty value
+    */
+    isEmpty() {
+        let value = this.value
+        if(!value || (Object.keys(value).length == 0)) {
+            return true
+        }
+
+        for(let key of Object.keys(value)) {
+            // an object is only empty if all its children are empty
+            // so as soon as one child is not empty we can return
+            let field = this.object[key]
+            if(!field.isEmpty()) {
+                return false
+            }
+        }
+        return true
+    }
 }
