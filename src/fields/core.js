@@ -129,9 +129,8 @@ export class Field {
     * @returns {Boolean} if the field has a non-empty value
     */
     isEmpty() {
-        return !this.value || (this.value == 0)
+        return !this.value || (this.value === 0)
     }
-
 
     /**
     * Render the form field using it's widget interface

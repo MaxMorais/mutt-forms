@@ -112,7 +112,7 @@ export class ObjectField extends Field {
     validate() {
         // this is used to check if the object itself is required
         let valid = !!super.validate()
-        
+
         // if there are children validate them as well
         if(!this.isEmpty()) {
             for(let key of Object.keys(this.object)) {
@@ -133,7 +133,7 @@ export class ObjectField extends Field {
     */
     isEmpty() {
         let value = this.value
-        if(!value || (Object.keys(value).length == 0)) {
+        if(!value || (Object.keys(value).length === 0)) {
             return true
         }
 

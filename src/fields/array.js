@@ -279,14 +279,14 @@ export class ArrayField extends Field {
     */
     isEmpty() {
         let value = this.value
-        if(!value || (Object.keys(value).length == 0)) {
+        if(!value || (Object.keys(value).length === 0)) {
             return true
         }
 
         for(let key of Object.keys(value)) {
             // an object is only empty if all its children are empty
             // so as soon as one child is not empty we can return
-            let field = this.object[key]
+            let field = this.slots[key]
             if(!field.isEmpty()) {
                 return false
             }
