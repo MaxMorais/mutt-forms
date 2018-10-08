@@ -31,10 +31,11 @@ export class Field {
     * @param {object} [options] rendering options for the field
     * @param {integer} [order] order flag for sorting multiple fields
     * @param {Field} [parent] parent a parent field
+    * @param {array} [dependancies] a list of dependancies
     */
     constructor({id, name, label = null, initial = null, widget = null,
         validators = [], attribs = {}, description = null, options = {},
-        order = null, parent = null}) {
+        order = null, parent = null, dependancies = null}) {
         this.id = id
         this.name = name
         this.label = label
@@ -163,6 +164,19 @@ export class Field {
             }
         }
 
+        if(this.dependancies && this.parent) {
+            // We need to check the dependancies of a field
+            for(let dependancy of this.dependancies) {
+                let field = this.parent.getFieldByPath(dependancy)
+
+                if(field) {
+                    if(this.field.validate()) {
+                        this.errors = ''
+                    }
+                }
+            }
+        }
+
         if(this.errors.length > 0) {
             this.widget.refreshErrorState(this.errors)
             return false
@@ -274,7 +288,8 @@ export class Field {
             name: name,
             options: options,
             attribs: {},
-            parent: parent
+            parent: parent,
+            dependancies: dependancies,
         }
 
         let FieldKlass = null
@@ -329,6 +344,10 @@ export class Field {
 
         if(schema.properties) {
             fieldSpec.properties = schema.properties
+        }
+
+        if(schema.dependancies) {
+            fieldSpec.dependancies = schema.dependancies
         }
 
         // Build validator list

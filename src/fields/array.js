@@ -20,7 +20,8 @@ export class ArrayField extends Field {
     */
     constructor({id, name, label = null, initial = null, widget = null,
         validators = [], attribs = {}, description = null, options = {},
-        order = null, parent = null, items = {}, minItems = 1, maxItems = null}) {
+        order = null, parent = null, items = {}, minItems = 1,
+        maxItems = null}) {
         super({
             id,
             name,

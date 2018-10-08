@@ -17,9 +17,13 @@ import { Field } from './core'
 */
 export class ObjectField extends Field {
 
+    /**
+     * @param {object} [dependancies] dependancy validation
+     */
     constructor({id, name, label = null, initial = null, widget = null,
         validators = [], attribs = {}, description = null, options = {},
-        order = null, parent = null, properties = {}, required = []}) {
+        order = null, parent = null, properties = {}, required = [],
+        dependancies = []}) {
         super({
             id,
             name,
@@ -41,6 +45,7 @@ export class ObjectField extends Field {
             let fieldId = `${name}_${fieldName}`
             let fieldOptions = {}
             let fieldRequired = false
+            let fieldDependsOn = []
 
             if(this.options.hasOwnProperty(fieldName)) {
                 fieldOptions = options[fieldName]
@@ -53,13 +58,20 @@ export class ObjectField extends Field {
                 }
             }
 
+            if(dependancies.length > 0) {
+                if(dependancies.indexOf(fieldName) !== -1) {
+                    fieldDependsOn = dependancies[fieldName]
+                }
+            }
+
             let field = this.constructor.new(
                 fieldId,
                 fieldName,
                 properties[fieldName],
                 fieldOptions,
                 this, // parent
-                fieldRequired
+                fieldRequired,
+                fieldDependsOn
             )
 
             if(!field) {
