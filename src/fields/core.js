@@ -33,7 +33,8 @@ export class Field {
      */
     constructor({id, name, label = null, initial = null, widget = null,
         validators = [], attribs = {}, description = null, options = {},
-        order = null, parent = null}) {
+        order = null, parent = null, dependencies = null,
+        isDependency = false}) {
         this.id = id
         this.name = name
         this.label = label
@@ -44,6 +45,8 @@ export class Field {
         this.sortOrder = order
         this.locked = false
         this.parent = parent
+        this.dependencies = dependencies
+        this.isDependency = isDependency
 
         if (!this.label) {
             this.label = this.name
@@ -125,7 +128,7 @@ export class Field {
 
     /**
     * Render the form field using it's widget interface
-    * @returns {DocumentFragment} rendered HTML widget
+    * @return {DocumentFragment} rendered HTML widget
     */
     render() {
         return this.widget.render()
@@ -133,7 +136,7 @@ export class Field {
 
     /**
     * Destroy the rendered widget
-    * @returns the success or failure response
+    * @return the success or failure response
     */
     destroy() {
         return this.widget.destroy()
@@ -159,6 +162,21 @@ export class Field {
             if (!validator.validate(value)) {
                 this.errors = validator.error
                 break
+            }
+        }
+
+        // Check the validity of the field's depedencies if
+        //      1. The field is required (i.e it has one or more validators)
+        //      2. The field is not required but has a value
+        if ((this.validators.length > 0 || value) && this.dependencies && this.parent) {
+            // We need to check the dependancies of a field
+            for (let dependency of this.dependencies) {
+                let field = this.parent.getFieldByPath(dependency)
+
+                if (field && !field.validate()) {
+                    // TODO: check this error format is suitable for consuming
+                    this.errors = `${field.name}: ${field.errors.join(',')}`
+                }
             }
         }
 
@@ -292,13 +310,15 @@ export class Field {
      *
      */
     static new(id, name, schema, options = {},
-        parent = null, required = false, dependancies = null) {
+        parent = null, required = false, dependencies = null, isDependency = false) {
         let fieldSpec = {
-            id: id,
-            name: name,
-            options: options,
+            id,
+            name,
+            options,
             attribs: {},
-            parent: parent,
+            parent,
+            dependencies,
+            isDependency,
         }
 
         let FieldKlass = null
@@ -353,6 +373,10 @@ export class Field {
 
         if (schema.properties) {
             fieldSpec.properties = schema.properties
+        }
+
+        if (schema.dependencies) {
+            fieldSpec.dependencies = schema.dependencies
         }
 
         // Build validator list

@@ -19,7 +19,8 @@ import {resolveSchema} from '../utils'
 export class ObjectField extends Field {
     constructor({id, name, label = null, initial = null, widget = null,
         validators = [], attribs = {}, description = null, options = {},
-        order = null, parent = null, properties = {}, required = []}) {
+        order = null, parent = null, properties = {}, required = [],
+        dependencies = []}) {
         super({
             id,
             name,
@@ -32,6 +33,7 @@ export class ObjectField extends Field {
             options,
             order,
             parent,
+            dependencies,
         })
 
         this.object = {}
@@ -43,6 +45,8 @@ export class ObjectField extends Field {
             let fieldId = `${name}_${fieldName}`
             let fieldOptions = {}
             let fieldRequired = false
+            let fieldDependsOn = []
+            let isDependency = false
 
             if (this.options.hasOwnProperty(fieldName)) {
                 fieldOptions = options[fieldName]
@@ -55,13 +59,29 @@ export class ObjectField extends Field {
                 }
             }
 
+            if (dependencies !== null && Object.keys(dependencies).length > 0 && dependencies.hasOwnProperty(fieldName)) {
+                fieldDependsOn.push(...dependencies[fieldName])
+            }
+
+            // Check if field is a dependent
+            if (dependencies !== null && Object.keys(dependencies).length > 0) {
+                for (const field in dependencies) {
+                    if (dependencies[field].includes(fieldName)) {
+                        isDependency = true
+                        break;
+                    }
+                }
+            }
+
             let field = this.constructor.new(
                 fieldId,
                 fieldName,
                 resolvedProps[fieldName],
                 fieldOptions,
                 this, // parent
-                fieldRequired
+                fieldRequired,
+                fieldDependsOn,
+                isDependency,
             )
 
             if (!field) {
@@ -152,7 +172,7 @@ export class ObjectField extends Field {
 
         for (let key of Object.keys(this.object)) {
             let field = this.object[key]
-            if (!field.validate()) {
+            if (!field.isDependency && !field.validate()) {
                 this._errors[key] = field.errors
                 valid = false
             }

@@ -10,3 +10,4 @@ build/
 include/
 node_modules
 dist
+coverage

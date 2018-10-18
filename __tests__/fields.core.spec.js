@@ -7,7 +7,7 @@
 import Mutt from '../src/index'
 
 describe('Field', () => {
-    var TestField
+    let TestField
 
     beforeEach(() => {
         TestField = new Mutt.fields.Field({
