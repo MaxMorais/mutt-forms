@@ -169,15 +169,7 @@ export class Field {
         //      1. The field is required (i.e it has one or more validators)
         //      2. The field is not required but has a value
         if ((this.validators.length > 0 || value) && this.dependencies && this.parent) {
-            // We need to check the dependancies of a field
-            for (let dependency of this.dependencies) {
-                let field = this.parent.getFieldByPath(dependency)
-
-                if (field && !field.validate()) {
-                    // TODO: check this error format is suitable for consuming
-                    this.errors = `${field.name}: ${field.errors.join(',')}`
-                }
-            }
+            this._validateDependencies(this.dependencies, value)
         }
 
         if (this.errors.length > 0) {
@@ -186,6 +178,86 @@ export class Field {
         }
 
         return true
+    }
+
+    /**
+     * Validates field dependencies
+     *
+     * @param {string[]|Object} dependencies
+     * @param {string} value
+     * @memberof Field
+     */
+    _validateDependencies(dependencies, value) {
+        if (!Array.isArray(dependencies) && typeof dependencies === 'object' && dependencies.constructor === Object) {
+            let validationResults = {}
+
+            for (const type in dependencies) {
+                if (dependencies.hasOwnProperty(type)) {
+                    // Validate each combination option
+                    validationResults[type] = dependencies[type].map((option) => {
+                        let errors = []
+
+                        // we need to check the value against the option's enum
+                        if (!option.properties[this.name].enum.includes(value)) {
+                            errors.push(`${this.value} does not match const`)
+                        }
+
+                        return this._validateFields(option.required).length === 0
+                    })
+
+                    // TODO: split into function
+                    // Update the results object with the correct values depending on the combination
+                    switch (type) {
+                    case 'oneOf':
+                        // For oneOf, results array should only have one 'true'
+                        if (validationResults[type].filter((result) => result).length !== 1) {
+                            this.errors = 'Data should match only one schema in "oneOf"'
+                        }
+                        break
+                    case 'anyOf':
+                        // For anyOf, results array should have at least one 'true'
+                        if (!validationResults[type].some((result) => result)) {
+                            this.errors = 'Data should match at least one schema in "anyOf"'
+                        }
+                        break
+                    case 'allOf':
+                        // For allOf, results array should have all 'true'
+                        if (!validationResults[type].every((result) => result)) {
+                            this.errors = 'Data should match all schema in "allOf"'
+                        }
+                        break
+                    default:
+                        break;
+                    }
+                }
+            }
+        } else {
+            // We need to check the dependancies of a field
+            for (const error of this._validateFields(dependencies)) {
+                this.errors = error
+            }
+        }
+    }
+
+    /**
+     * Calls validation on a set of fields and returns any errors
+     *
+     * @param {string[]} fields the field to be validated
+     * @return {string[]} an array of errors
+     * @memberof Field
+     */
+    _validateFields(fields) {
+        let errors = []
+
+        for (const fieldName of fields) {
+            let field = this.parent.getFieldByPath(fieldName)
+
+            if (field && !field.validate()) {
+                errors.push(`${field.name}: ${field.errors.join(',')}`)
+            }
+        }
+
+        return errors
     }
 
     /**
@@ -380,7 +452,7 @@ export class Field {
         }
 
         // Build validator list
-        if (required || (options.hasOwnProperty('required') &&
+        if (isDependency || required || (options.hasOwnProperty('required') &&
             options.required)) {
             if (schema.type === 'boolean') {
                 validators.push(new BooleanRequiredValidator())

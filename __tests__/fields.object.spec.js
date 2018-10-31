@@ -268,6 +268,27 @@ describe('Object Field', () => {
                 expect(field.object.telephone.isDependency).toEqual(true)
             })
 
+            test('dependent fields should have validator injected', () => {
+                schema.dependencies = {
+                    name: ['email'],
+                    email: ['telephone'],
+                }
+
+                const field = Mutt.fields.ObjectField.new(
+                    'test',
+                    'test',
+                    schema, {}
+                )
+
+                field.value = {
+                    name: 'Testing',
+                    email: ' test@example.com ',
+                }
+
+                expect(field.object.email.validators.length > 0).toBe(true)
+                expect(field.object.telephone.validators.length > 0).toBe(true)
+            })
+
             xtest('circular dependency should be detected', () => {
                 // TODO:
             })
@@ -278,8 +299,6 @@ describe('Object Field', () => {
                 schema.dependencies = {
                     name: ['email'],
                 }
-
-                schema.required = ['email']
 
                 const field = Mutt.fields.ObjectField.new(
                     'test',
@@ -306,8 +325,6 @@ describe('Object Field', () => {
                     name: ['email'],
                 }
 
-                schema.required = ['email']
-
                 const field = Mutt.fields.ObjectField.new(
                     'test',
                     'test',
@@ -333,7 +350,7 @@ describe('Object Field', () => {
                     name: ['email'],
                 }
 
-                schema.required = ['name', 'email']
+                schema.required = ['name']
 
                 const field = Mutt.fields.ObjectField.new(
                     'test',
@@ -360,7 +377,7 @@ describe('Object Field', () => {
                     name: ['email'],
                 }
 
-                schema.required = ['name', 'email']
+                schema.required = ['name']
 
                 const field = Mutt.fields.ObjectField.new(
                     'test',
@@ -389,7 +406,7 @@ describe('Object Field', () => {
                     telephone: ['email'],
                 }
 
-                schema.required = ['name', 'telephone', 'email']
+                schema.required = ['name', 'telephone']
 
                 const field = Mutt.fields.ObjectField.new(
                     'test',
@@ -422,7 +439,7 @@ describe('Object Field', () => {
                     email: ['telephone'],
                 }
 
-                schema.required = ['name', 'telephone', 'email']
+                schema.required = ['name']
 
                 const field = Mutt.fields.ObjectField.new(
                     'test',
@@ -452,20 +469,512 @@ describe('Object Field', () => {
                 telephoneValidateSpy.mockRestore()
             })
 
-            xtest('when checkbox checked, dependency fields should be validated', () => {
-                // TODO:
+            describe('boolean field validation', () => {
+                test('when boolean field true, dependency fields should be validated', () => {
+                    schema.properties.toggle = {
+                        type: 'boolean',
+                    }
+
+                    schema.dependencies = {
+                        toggle: ['email'],
+                    }
+
+                    const field = Mutt.fields.ObjectField.new(
+                        'test',
+                        'test',
+                        schema, {},
+                    )
+
+                    field.value = {
+                        toggle: true,
+                        email: 'email@example.com',
+                    }
+
+                    const emailValidateSpy = jest.spyOn(field.object.email, 'validate')
+                    const validateResult = field.validate()
+
+                    expect(emailValidateSpy).toHaveBeenCalled()
+                    expect(validateResult).toBe(true)
+
+                    emailValidateSpy.mockRestore()
+                })
+
+                test('when boolean field false, dependency fields should not be validated', () => {
+                    schema.properties.toggle = {
+                        type: 'boolean',
+                    }
+
+                    schema.dependencies = {
+                        toggle: ['email'],
+                    }
+
+                    schema.required = ['email']
+
+                    const field = Mutt.fields.ObjectField.new(
+                        'test',
+                        'test',
+                        schema, {},
+                    )
+
+                    field.value = {
+                        toggle: false,
+                        email: 'email@example.com',
+                    }
+
+                    const emailValidateSpy = jest.spyOn(field.object.email, 'validate')
+                    const validateResult = field.validate()
+
+                    expect(emailValidateSpy).not.toHaveBeenCalled()
+                    expect(validateResult).toBe(true)
+
+                    emailValidateSpy.mockRestore()
+                })
             })
 
-            xtest('when checkbox unchecked, dependency fields should not be validated', () => {
-                // TODO:
-            })
+            describe('choice field validation', () => {
+                beforeEach(() => {
+                    schema = {
+                        'type': 'object',
+                        'properties': {
+                            'choice': {
+                                'type': 'string',
+                                'enum': [
+                                    'CHOICE_1',
+                                    'CHOICE_2',
+                                ],
+                            },
+                            'choice_1_depedency_field': {
+                                'type': 'string',
+                            },
+                            'choice_2_depedency_field': {
+                                'type': 'string',
+                            },
+                            'choice_3_depedency_field': {
+                                'type': 'string',
+                            },
+                        },
+                        'required': [
+                            'choice',
+                        ],
+                    }
+                });
 
-            xtest('when radio checked, dependency fields should be validated', () => {
-                // TODO:
-            })
 
-            xtest('when radio unchecked, dependency fields should not be validated', () => {
+                describe('oneOf options', () => {
+                    beforeEach(() => {
+                        schema.dependencies = {
+                            'choice': {
+                                'oneOf': [{
+                                    'properties': {
+                                        'choice': {
+                                            'enum': [
+                                                'CHOICE_1',
+                                            ],
+                                        },
+                                    },
+                                    'required': [
+                                        'choice_1_depedency_field',
+                                    ],
+                                },
+                                {
+                                    'properties': {
+                                        'choice': {
+                                            'enum': [
+                                                'CHOICE_1',
+                                            ],
+                                        },
+                                    },
+                                    'required': [
+                                        'choice_2_depedency_field',
+                                    ],
+                                },
+                                {
+                                    'properties': {
+                                        'choice': {
+                                            'enum': [
+                                                'CHOICE_2',
+                                            ],
+                                        },
+                                    },
+                                    'required': [
+                                        'choice_2_depedency_field',
+                                    ],
+                                },
+                                ],
+                            },
+                        }
+                    });
+
+                    test('validation should return true when one set of dependencies is valid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: 'Test',
+                        }
+
+                        let validateResult = field.validate()
+                        expect(validateResult).toBe(true)
+                    })
+
+                    test('validation should return false when more than one set of dependencies is valid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: 'Test',
+                            choice_2_depedency_field: 'Test',
+                        }
+
+                        let validateResult = field.validate()
+
+                        expect(validateResult).toBe(false)
+                        expect(field.errors).toEqual({'choice': ['Data should match only one schema in "oneOf"']})
+                    })
+
+                    test('validation should return false when one set of dependencies is invalid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: '', // invalid value for required field
+                        }
+
+                        let validateResult = field.validate()
+
+                        expect(validateResult).toBe(false)
+                        expect(field.errors).toEqual({'choice': ['Data should match only one schema in "oneOf"']})
+                    })
+                })
+
+                describe('anyOf options', () => {
+                    beforeEach(() => {
+                        schema.dependencies = {
+                            'choice': {
+                                'anyOf': [{
+                                    'properties': {
+                                        'choice': {
+                                            'enum': [
+                                                'CHOICE_1',
+                                            ],
+                                        },
+                                    },
+                                    'required': [
+                                        'choice_1_depedency_field',
+                                    ],
+                                },
+                                {
+                                    'properties': {
+                                        'choice': {
+                                            'enum': [
+                                                'CHOICE_1',
+                                            ],
+                                        },
+                                    },
+                                    'required': [
+                                        'choice_2_depedency_field',
+                                    ],
+                                },
+                                {
+                                    'properties': {
+                                        'choice': {
+                                            'enum': [
+                                                'CHOICE_2',
+                                            ],
+                                        },
+                                    },
+                                    'required': [
+                                        'choice_2_depedency_field',
+                                    ],
+                                },
+                                ],
+                            },
+                        }
+                    });
+
+                    test('validation should return true when one set of dependencies is valid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: 'Test',
+                        }
+
+                        let validateResult = field.validate()
+                        expect(validateResult).toBe(true)
+                    })
+
+                    test('validation should return true when more than one set of dependencies is valid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: 'Test',
+                            choice_2_depedency_field: 'Test',
+                        }
+
+                        let validateResult = field.validate()
+                        expect(validateResult).toBe(true)
+                    })
+
+                    test('validation should return false when no set of dependencies is valid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: '',
+                            choice_2_depedency_field: '',
+                        }
+
+                        let validateResult = field.validate()
+                        expect(validateResult).toBe(false)
+                        expect(field.errors).toEqual({'choice': ['Data should match at least one schema in "anyOf"']})
+                    })
+                })
+
+                describe('allOf options', () => {
+                    beforeEach(() => {
+                        schema.dependencies = {
+                            'choice': {
+                                'allOf': [
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_1',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_1_depedency_field',
+                                        ],
+                                    },
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_1',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_2_depedency_field',
+                                        ],
+                                    },
+
+                                ],
+                            },
+                        }
+                    });
+
+                    test('validation should return true when all set of dependencies are valid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: 'Test',
+                            choice_2_depedency_field: 'Test',
+                            choice_2_depedency_field: 'Test',
+                        }
+
+                        let validateResult = field.validate()
+
+                        expect(validateResult).toBe(true)
+                    })
+
+                    test('validation should return false when one set of dependencies is invalid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: 'Test',
+                            choice_2_depedency_field: '',
+                        }
+
+                        let validateResult = field.validate()
+                        expect(validateResult).toBe(false)
+                        expect(field.errors).toEqual({'choice': ['Data should match all schema in "allOf"']})
+                    })
+
+                    test('validation should return false when value does not match all constants', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: 'Test',
+                        }
+
+                        schema.dependencies.choice.allOf.push({
+                            'properties': {
+                                'choice': {
+                                    'enum': [
+                                        'CHOICE_2',
+                                    ],
+                                },
+                            },
+                            'required': [
+                                'choice_1_depedency_field',
+                            ],
+                        }, )
+
+                        let validateResult = field.validate()
+
+                        expect(validateResult).toBe(false)
+                        expect(field.errors).toEqual({'choice': ['Data should match all schema in "allOf"']})
+                    })
+
+                    test('validation should return false when no set of dependencies is valid', () => {
+                        const field = Mutt.fields.ObjectField.new(
+                            'test',
+                            'test',
+                            schema, {},
+                        )
+
+                        // Set field values so that 2 validate dependencies are met
+                        field.value = {
+                            choice: 'CHOICE_1',
+                            choice_1_depedency_field: '',
+                            choice_2_depedency_field: '',
+                        }
+
+                        let validateResult = field.validate()
+
+                        expect(validateResult).toBe(false)
+                        expect(field.errors).toEqual({'choice': ['Data should match all schema in "allOf"']})
+                    })
+                })
+
                 // TODO:
+                describe('combinations of options', () => {
+                    beforeEach(() => {
+                        schema.dependencies = {
+                            'choice': {
+                                'allOf': [
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_1',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_1_depedency_field',
+                                        ],
+                                    },
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_1',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_2_depedency_field',
+                                        ],
+                                    },
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_2',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_2_depedency_field',
+                                        ],
+                                    },
+                                ],
+                                'anyOf': [
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_1',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_1_depedency_field',
+                                        ],
+                                    },
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_1',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_2_depedency_field',
+                                        ],
+                                    },
+                                    {
+                                        'properties': {
+                                            'choice': {
+                                                'enum': [
+                                                    'CHOICE_2',
+                                                ],
+                                            },
+                                        },
+                                        'required': [
+                                            'choice_2_depedency_field',
+                                        ],
+                                    },
+                                ],
+                            },
+                        }
+                    });
+                })
             })
         })
     })

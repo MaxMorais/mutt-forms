@@ -59,16 +59,39 @@ export class ObjectField extends Field {
                 }
             }
 
+            // Set the fielf's dependencies
             if (dependencies !== null && Object.keys(dependencies).length > 0 && dependencies.hasOwnProperty(fieldName)) {
-                fieldDependsOn.push(...dependencies[fieldName])
+                let fieldDependencies = dependencies[fieldName]
+
+                if (!Array.isArray(fieldDependencies)) {
+                    fieldDependsOn = fieldDependencies
+                } else {
+                    fieldDependsOn.push(...dependencies[fieldName])
+                }
             }
 
-            // Check if field is a dependent
+            // TODO: refactor
+            // Check if current field itself is a dependent
             if (dependencies !== null && Object.keys(dependencies).length > 0) {
                 for (const field in dependencies) {
-                    if (dependencies[field].includes(fieldName)) {
-                        isDependency = true
-                        break;
+                    if (dependencies.hasOwnProperty(field)) {
+                        let fieldDependencies = dependencies[field]
+
+                        if (!Array.isArray(fieldDependencies)) {
+                            // get the required arrays from the dependency objects and set as an array
+                            for (const dependencyType in fieldDependencies) {
+                                if (fieldDependencies.hasOwnProperty(dependencyType)) {
+                                    fieldDependencies = fieldDependencies[dependencyType].reduce((acc, x) => {
+                                        return acc.concat(x.required)
+                                    }, [])
+                                }
+                            }
+                        }
+
+                        if (fieldDependencies.includes(fieldName)) {
+                            isDependency = true
+                            break;
+                        }
                     }
                 }
             }

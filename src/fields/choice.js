@@ -15,7 +15,7 @@ import {Field} from './core'
 export class ChoiceField extends Field {
     constructor({id, name, label = null, initial = null, widget = null,
         validators = [], attribs = {}, description = null, options = {},
-        order = null, parent = null, choices = []}) {
+        order = null, parent = null, choices = [], dependencies = null}) {
         super({
             id,
             name,
@@ -28,6 +28,7 @@ export class ChoiceField extends Field {
             options,
             order,
             parent,
+            dependencies,
         })
 
         this.choices = choices
@@ -43,7 +44,7 @@ export class ChoiceField extends Field {
 
     /**
     * Get the widget used to display the field
-    * @returns {SelectInput} widget to display
+    * @return {SelectInput} widget to display
     */
     getWidget() {
         if (this.options.hasOwnProperty('widget') &&
