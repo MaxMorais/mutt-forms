@@ -639,7 +639,7 @@ describe('Object Field', () => {
                         let validateResult = field.validate()
 
                         expect(validateResult).toBe(false)
-                        expect(field.errors).toEqual({'choice': ['Data should match only one schema in "oneOf"']})
+                        expect(field.errors).toEqual({'choice': ['Data should match one schema in "oneOf"']})
                     })
 
                     test('validation should return false when one set of dependencies is invalid', () => {
@@ -659,7 +659,7 @@ describe('Object Field', () => {
                         let validateResult = field.validate()
 
                         expect(validateResult).toBe(false)
-                        expect(field.errors).toEqual({'choice': ['Data should match only one schema in "oneOf"']})
+                        expect(field.errors).toEqual({'choice': ['Data should match one schema in "oneOf"']})
                     })
                 })
 
@@ -974,6 +974,67 @@ describe('Object Field', () => {
                             },
                         }
                     });
+                })
+            })
+
+            // TODO: remove this test once validate
+            describe('Policy Example', () => {
+                beforeEach(()=> {
+                    schema = require('./fixtures/schema.json')
+                })
+
+                test('shoukd be invalid as vet is required', ()=> {
+                    const field = Mutt.fields.ObjectField.new(
+                        'test',
+                        'test',
+                        schema, {}
+                    )
+
+                    field.object.policy.value = {
+                        'cessation_date': '2018-11-14T03:03:00.000Z',
+                        'inception_date': '2018-11-20T00:01:00.000Z',
+                        'option': 'A',
+                        'fixed_excess': '678',
+                        'voluntary_excess': '67',
+                        'addons': '678',
+                        'variation': 78,
+                    }
+
+                    field.object.insured_entities.value = [
+                        {
+                            'category': 'none',
+                            'type': 'A',
+                            'vet_registered': true,
+                            'commercial': false,
+                            'recent_treatment': false,
+                            'declines': false,
+                            'outside_enclosure': false,
+                            'attempted_theft': false,
+                            'pet_name': 'ewfew',
+                            'microchipped': false,
+                            'value': 345,
+                            'healthy': true,
+                            'date_of_birth': '2017-10-30',
+                            'gender': 'MALE',
+                        },
+                    ]
+
+                    field.object.policy_holders.value = [{}]
+
+                    field.object.payment.value = {
+                        'payment_type': 'CREDIT_CARD',
+                        'stripe_token': 324,
+                    }
+
+                    const validateResult = field.validate()
+
+                    expect(validateResult).toBe(false)
+
+                    expect(field.object.insured_entities.slots[0].errors).toEqual({
+                        'vet_registered': [
+                            'Data should match one schema in "oneOf"',
+                        ],
+                    })
                 })
             })
         })

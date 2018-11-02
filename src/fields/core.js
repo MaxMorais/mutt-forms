@@ -195,14 +195,21 @@ export class Field {
                 if (dependencies.hasOwnProperty(type)) {
                     // Validate each combination option
                     validationResults[type] = dependencies[type].map((option) => {
+                        let isValid = true
                         let errors = []
 
                         // we need to check the value against the option's enum
                         if (!option.properties[this.name].enum.includes(value)) {
                             errors.push(`${this.value} does not match const`)
+                            isValid = false
                         }
 
-                        return this._validateFields(option.required).length === 0
+                        if (typeof option.required !== 'undefined' &&
+                            this._validateFields(option.required).length !== 0) {
+                            isValid = false
+                        }
+
+                        return isValid
                     })
 
                     // TODO: split into function
@@ -211,7 +218,7 @@ export class Field {
                     case 'oneOf':
                         // For oneOf, results array should only have one 'true'
                         if (validationResults[type].filter((result) => result).length !== 1) {
-                            this.errors = 'Data should match only one schema in "oneOf"'
+                            this.errors = 'Data should match one schema in "oneOf"'
                         }
                         break
                     case 'anyOf':

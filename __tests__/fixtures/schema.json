@@ -1,0 +1,636 @@
+{
+  "$id": "https://schemas.devbymany.com/public/products/pet/exotic-pet/policy/1/0.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+     "policy",
+     "policy_holders",
+     "insured_entities"
+  ],
+  "properties": {
+     "policy": {
+        "type": "object",
+        "properties": {
+           "cessation_date": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Cessation"
+           },
+           "inception_date": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Inception"
+           },
+           "option": {
+              "type": "string"
+           },
+           "fixed_excess": {
+              "type": "string",
+              "title": "Fixed Excess"
+           },
+           "voluntary_excess": {
+              "type": "string",
+              "title": "Voluntary Excess"
+           },
+           "addons": {
+              "type": "string",
+              "default": ""
+           },
+           "variation": {
+              "type": "integer"
+           }
+        },
+        "required": [
+           "inception_date",
+           "cessation_date",
+           "option"
+        ]
+     },
+     "insured_entities": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 10,
+        "items": {
+           "type": "object",
+           "title": "Exotic Pet Entity Definition",
+           "properties": {
+              "vet_registered": {
+                 "type": "boolean",
+                 "title": "Veterinary Registered"
+              },
+              "vet_name": {
+                 "type": "string",
+                 "title": "What is the name of the veterinary practice?"
+              },
+              "vet_telephone": {
+                 "type": "string",
+                 "title": "What is the telephone number of the veterinary practice?"
+              },
+              "commercial": {
+                 "type": "boolean",
+                 "title": "Commercial purposes"
+              },
+              "commercial_premises_type": {
+                 "type": "string",
+                 "title": "What type of commercial purpose or premises?"
+              },
+              "commercial_activity_location": {
+                 "type": "string",
+                 "title": "Where does the commercial activity take place?"
+              },
+              "commercial_how_often": {
+                 "type": "string",
+                 "title": "How often does the commercial activity take place?"
+              },
+              "recent_treatment": {
+                 "type": "boolean",
+                 "title": "Any veterinary treatment in the last 12 months that was not routine?"
+              },
+              "recent_treatment_summary": {
+                 "type": "string",
+                 "title": "Please provide a brief summary of treatments received"
+              },
+              "recent_treatment_date": {
+                 "type": "string",
+                 "title": "Date of treatment"
+              },
+              "declines": {
+                 "type": "boolean",
+                 "title": "Has an insurer declined a proposal, refused renewal, terminated cover or imposed special terms "
+              },
+              "declines_summary": {
+                 "type": "string",
+                 "title": "Please provide a brief summary"
+              },
+              "outside_enclosure": {
+                 "type": "boolean",
+                 "title": "kept in an outside enclosure or pet housing?"
+              },
+              "attempted_theft": {
+                 "type": "boolean",
+                 "title": "Has there ever been any theft or attempted theft at the address"
+              },
+              "attempted_theft_date": {
+                 "type": "string",
+                 "title": "When did the incident(s) take place?"
+              },
+              "attempted_theft_entry": {
+                 "type": "string",
+                 "title": "Was entry to the property gained?"
+              },
+              "attempted_theft_items_taken": {
+                 "type": "string",
+                 "title": "List any items taken (and their value)?"
+              },
+              "attempted_theft_additional_security": {
+                 "type": "string",
+                 "title": "Details of additional security now in place?"
+              },
+              "category": {
+                 "default": "none",
+                 "type": "string",
+                 "title": "category"
+              },
+              "pet_name": {
+                 "type": "string",
+                 "title": "Pet Name"
+              },
+              "date_of_birth": {
+                 "format": "date",
+                 "type": "string",
+                 "title": "Date of Birth"
+              },
+              "gender": {
+                 "type": "string",
+                 "title": "Gender",
+                 "enum": [
+                    "MALE",
+                    "FEMALE",
+                    "UNKNOWN"
+                 ]
+              },
+              "microchipped": {
+                 "type": "boolean",
+                 "title": "Microchipped"
+              },
+              "microchip_number": {
+                 "type": "string",
+                 "title": "Microchip number"
+              },
+              "value": {
+                 "type": "integer",
+                 "title": "Value"
+              },
+              "healthy": {
+                 "type": "boolean",
+                 "title": "Is your pet healthy and well?"
+              },
+              "healthy_condition_summary": {
+                 "type": "string",
+                 "title": "Please provide a brief summary of symptoms or disability."
+              },
+              "photo": {
+                 "type": "string",
+                 "title": "Photo"
+              },
+              "type": {
+                 "type": "string",
+                 "title": "Type",
+                 "default": "A",
+                 "enum": [
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E",
+                    "F",
+                    "T"
+                 ]
+              }
+           },
+           "required": [
+              "vet_registered",
+              "commercial",
+              "recent_treatment",
+              "declines",
+              "outside_enclosure",
+              "attempted_theft",
+              "category",
+              "pet_name",
+              "date_of_birth",
+              "gender",
+              "microchipped",
+              "value",
+              "healthy",
+              "type"
+           ],
+           "dependencies": {
+              "vet_registered": {
+                 "oneOf": [
+                    {
+                       "properties": {
+                          "vet_registered": {
+                             "const": 
+                                false
+                             ,"enum": [false]
+                          }
+                       }
+                    },
+                    {
+                       "properties": {
+                          "vet_registered": {
+                             "const": 
+                                true
+                                ,"enum": [true]
+                             
+                          }
+                       },
+                       "required": [
+                          "vet_name",
+                          "vet_telephone"
+                       ]
+                    }
+                 ]
+              },
+              "commercial": {
+                 "oneOf": [
+                    {
+                       "properties": {
+                          "commercial": {
+                             "enum": [
+                                false
+                             ]
+                          }
+                       }
+                    },
+                    {
+                       "properties": {
+                          "commercial": {
+                             "enum": [
+                                true
+                             ]
+                          }
+                       },
+                       "required": [
+                          "commercial_premises_type",
+                          "commercial_activity_location",
+                          "commercial_how_often"
+                       ]
+                    }
+                 ]
+              },
+              "recent_treatment": {
+                 "oneOf": [
+                    {
+                       "properties": {
+                          "recent_treatment": {
+                             "enum": [
+                                false
+                             ]
+                          }
+                       }
+                    },
+                    {
+                       "properties": {
+                          "recent_treatment": {
+                             "enum": [
+                                true
+                             ]
+                          }
+                       },
+                       "required": [
+                          "recent_treatment_summary",
+                          "recent_treatment_date"
+                       ]
+                    }
+                 ]
+              },
+              "declines": {
+                 "oneOf": [
+                    {
+                       "properties": {
+                          "declines": {
+                             "enum": [
+                                false
+                             ]
+                          }
+                       }
+                    },
+                    {
+                       "properties": {
+                          "declines": {
+                             "enum": [
+                                true
+                             ]
+                          }
+                       },
+                       "required": [
+                          "declines_summary"
+                       ]
+                    }
+                 ]
+              },
+              "attempted_theft": {
+                 "oneOf": [
+                    {
+                       "properties": {
+                          "attempted_theft": {
+                             "enum": [
+                                false
+                             ]
+                          }
+                       }
+                    },
+                    {
+                       "properties": {
+                          "attempted_theft": {
+                             "enum": [
+                                true
+                             ]
+                          }
+                       },
+                       "required": [
+                          "attempted_theft_date",
+                          "attempted_theft_entry",
+                          "attempted_theft_items_taken",
+                          "attempted_theft_additional_security"
+                       ]
+                    }
+                 ]
+              },
+              "microchipped": {
+                 "oneOf": [
+                    {
+                       "properties": {
+                          "microchipped": {
+                             "enum": [
+                                false
+                             ]
+                          }
+                       }
+                    },
+                    {
+                       "properties": {
+                          "microchipped": {
+                             "enum": [
+                                true
+                             ]
+                          }
+                       },
+                       "required": [
+                          "microchip_number"
+                       ]
+                    }
+                 ]
+              },
+              "healthy": {
+                 "oneOf": [
+                    {
+                       "properties": {
+                          "healthy": {
+                             "enum": [
+                                true
+                             ]
+                          }
+                       }
+                    },
+                    {
+                       "properties": {
+                          "healthy": {
+                             "enum": [
+                                false
+                             ]
+                          }
+                       },
+                       "required": [
+                          "healthy_condition_summary"
+                       ]
+                    }
+                 ]
+              }
+           }
+        }
+     },
+     "policy_holders": {
+        "type": "array",
+        "items": {
+           "type": "object",
+           "allOf": [
+              {
+                 "title": "Person definition",
+                 "properties": {
+                    "last_name": {
+                       "type": "string",
+                       "title": "Last Name"
+                    },
+                    "first_name": {
+                       "type": "string",
+                       "title": "First Name"
+                    },
+                    "title": {
+                       "enum": [
+                          "MR",
+                          "MRS",
+                          "MISS",
+                          "MS",
+                          "MX",
+                          "DR",
+                          "PROF",
+                          "NA"
+                       ],
+                       "type": "string",
+                       "title": "Title"
+                    },
+                    "email": {
+                       "type": "string",
+                       "title": "Email address"
+                    },
+                    "date_of_birth": {
+                       "type": "string",
+                       "format": "date-time",
+                       "title": "Date of birth"
+                    }
+                 },
+                 "required": [
+                    "last_name",
+                    "first_name",
+                    "title",
+                    "email",
+                    "date_of_birth"
+                 ]
+              },
+              {
+                 "title": "Address Definition",
+                 "properties": {
+                    "address": {
+                       "type": "object",
+                       "properties": {
+                          "line1": {
+                             "type": "string",
+                             "title": "Address line 1"
+                          },
+                          "line2": {
+                             "type": "string",
+                             "title": "Address line 2"
+                          },
+                          "city": {
+                             "type": "string",
+                             "title": "City"
+                          },
+                          "county": {
+                             "type": "string",
+                             "title": "County"
+                          },
+                          "postcode": {
+                             "type": "string",
+                             "title": "Postcode"
+                          },
+                          "country": {
+                             "type": "string",
+                             "title": "Country"
+                          },
+                          "country_code": {
+                             "type": "string",
+                             "title": "Country Code"
+                          }
+                       },
+                       "required": [
+                          "line1",
+                          "city",
+                          "postcode",
+                          "country",
+                          "country_code"
+                       ],
+                       "title": "Address Definition"
+                    }
+                 }
+              },
+              {
+                 "properties": {
+                    "declarations": {
+                       "properties": {
+                          "agree_terms": {
+                             "$comment": "Is a boolean, but must be true",
+                             "type": "boolean",
+                             "enum": [
+                                true
+                             ]
+                          },
+                          "declare_no_convictions": {
+                             "$comment": "Is a boolean, but must be true",
+                             "type": "boolean",
+                             "enum": [
+                                true
+                             ]
+                          }
+                       },
+                       "required": [
+                          "agree_terms",
+                          "declare_no_convictions"
+                       ]
+                    }
+                 }
+              },
+              {
+                 "properties": {
+                    "hear_about_us": {
+                       "type": "string",
+                       "title": "How did you hear about us?",
+                       "enum": [
+                          "Internet/search engine",
+                          "A friend recommended me",
+                          "Pet shop/Breeder/Microchipper",
+                          "vet",
+                          "Magazine/Newspaper",
+                          "Email",
+                          "Society/Charity",
+                          "Unknown"
+                       ]
+                    },
+                    "recommender": {
+                       "type": "string",
+                       "title": "Help us to thank our retailers and breeders"
+                    }
+                 },
+                 "required": [
+                    "hear_about_us"
+                 ],
+                 "dependencies": {
+                    "hear_about_us": {
+                       "oneOf": [
+                          {
+                             "not": {
+                                "properties": {
+                                   "hear_about_us": {
+                                      "enum": [
+                                         "Pet shop/Breeder/Microchipper"
+                                      ]
+                                   }
+                                }
+                             }
+                          },
+                          {
+                             "properties": {
+                                "hear_about_us": {
+                                   "enum": [
+                                      "Pet shop/Breeder/Microchipper"
+                                   ]
+                                }
+                             },
+                             "required": [
+                                "recommender"
+                             ]
+                          }
+                       ]
+                    }
+                 }
+              }
+           ]
+        }
+     },
+     "payment": {
+        "type": "object",
+        "properties": {
+           "payment_type": {
+              "type": "string",
+              "title": "Payment type",
+              "enum": [
+                 "DIRECT_DEBIT",
+                 "CREDIT_CARD"
+              ]
+           },
+           "direct_debit_account_name": {
+              "type": "string",
+              "title": "Direct debit account name"
+           },
+           "direct_debit_account_number": {
+              "type": "string",
+              "title": "Direct debit account number"
+           },
+           "direct_debit_sort_code": {
+              "type": "string",
+              "title": "Direct debit sort code"
+           },
+           "stripe_token": {
+              "type": "integer",
+              "title": "Stripe token"
+           }
+        },
+        "required": [
+           "payment_type"
+        ],
+        "dependencies": {
+           "payment_type": {
+              "oneOf": [
+                 {
+                    "properties": {
+                       "payment_type": {
+                          "enum": [
+                             "DIRECT_DEBIT"
+                          ]
+                       }
+                    },
+                    "required": [
+                       "direct_debit_account_name",
+                       "direct_debit_account_number",
+                       "direct_debit_sort_code"
+                    ]
+                 },
+                 {
+                    "properties": {
+                       "payment_type": {
+                          "enum": [
+                             "CREDIT_CARD"
+                          ]
+                       }
+                    },
+                    "required": [
+                       "stripe_token"
+                    ]
+                 }
+              ]
+           }
+        }
+     }
+  }
+}
