@@ -978,63 +978,36 @@ describe('Object Field', () => {
             })
 
             // TODO: remove this test once validate
-            describe('Policy Example', () => {
+            describe.only('Policy Example', () => {
                 beforeEach(()=> {
                     schema = require('./fixtures/schema.json')
                 })
 
-                test('shoukd be invalid as vet is required', ()=> {
-                    const field = Mutt.fields.ObjectField.new(
-                        'test',
-                        'test',
-                        schema, {}
-                    )
+                test('should be invalid as vet is required', ()=> {
+                    const form = new Mutt(schema)
 
-                    field.object.policy.value = {
-                        'cessation_date': '2018-11-14T03:03:00.000Z',
-                        'inception_date': '2018-11-20T00:01:00.000Z',
-                        'option': 'A',
-                        'fixed_excess': '678',
-                        'voluntary_excess': '67',
-                        'addons': '678',
-                        'variation': 78,
-                    }
+                    form.render(document.querySelector('body'));
 
-                    field.object.insured_entities.value = [
-                        {
-                            'category': 'none',
-                            'type': 'A',
-                            'vet_registered': true,
-                            'commercial': false,
-                            'recent_treatment': false,
-                            'declines': false,
-                            'outside_enclosure': false,
-                            'attempted_theft': false,
-                            'pet_name': 'ewfew',
-                            'microchipped': false,
-                            'value': 345,
-                            'healthy': true,
-                            'date_of_birth': '2017-10-30',
-                            'gender': 'MALE',
-                        },
-                    ]
+                    // set the vet_registered to be true
+                    document.querySelector('[name=vet_registered]').click()
 
-                    field.object.policy_holders.value = [{}]
+                    const validateResult = form.validate()
 
-                    field.object.payment.value = {
-                        'payment_type': 'CREDIT_CARD',
-                        'stripe_token': 324,
-                    }
+                    // console.log(JSON.stringify(form, (key, value) => {
+                    //     if (key === 'parent' || key === '_field') {
+                    //         return '[Circular]'
+                    //     }
 
-                    const validateResult = field.validate()
+                    //     return value
+                    // }, 2))
+
+                    console.log(document.getElementById('insured_entities_1_vet_name'))
+
+                    expect(document.getElementById('insured_entities_1_vet_name').classList.contains('mutt-error-wrapper')).toBe(true)
 
                     expect(validateResult).toBe(false)
 
-                    expect(field.object.insured_entities.slots[0].errors).toEqual({
-                        'vet_registered': [
-                            'Data should match one schema in "oneOf"',
-                        ],
-                    })
+                    expect(form.getFieldByPath('insured_entities.0.vet_registered').errors).toEqual(['Data should match one schema in "oneOf"'])
                 })
             })
         })
