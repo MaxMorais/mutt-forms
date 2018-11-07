@@ -195,21 +195,22 @@ export class Field {
                 if (dependencies.hasOwnProperty(type)) {
                     // Validate each combination option
                     validationResults[type] = dependencies[type].map((option) => {
-                        let isValid = true
                         let errors = []
 
                         // we need to check the value against the option's enum
                         if (!option.properties[this.name].enum.includes(value)) {
+                            // This combination option is false as the current field
+                            // value does not match the value for the option
                             errors.push(`${this.value} does not match const`)
-                            isValid = false
+                            return false
                         }
 
                         if (typeof option.required !== 'undefined' &&
                             this._validateFields(option.required).length !== 0) {
-                            isValid = false
+                            return false
                         }
 
-                        return isValid
+                        return true
                     })
 
                     // TODO: split into function
