@@ -157,8 +157,6 @@ export class Field {
         // Clear any previous validations
         this.refreshValidationState()
 
-        console.log('validating:', this.name, this.value)
-
         let value = this.value
         for (let validator of this.validators) {
             if (!validator.validate(value)) {

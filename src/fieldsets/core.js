@@ -50,7 +50,7 @@ export class Fieldset {
     /**
     * Get the data for the fieldset, this is returned as
     * an object with field -> value pairs
-    * @returns {object}
+    * @return {object}
     */
     data() {
         let data = {}
@@ -77,7 +77,7 @@ export class Fieldset {
     /**
     * Validate the fields in the fieldset. Stores an object
     * of error information field name -> error.
-    * @returns {boolean}
+    * @return {boolean}
     */
     validate() {
         let valid = true
@@ -125,7 +125,7 @@ export class Fieldset {
 
     /**
     * Render the fieldset and return a document fragment
-    * @returns {HTMLFragment}
+    * @return {HTMLFragment}
     */
     render() {
         let fieldsetContainer = document.createDocumentFragment()
@@ -188,7 +188,7 @@ export class Fieldset {
     * Get a field in the form by it's path. Paths should be
     * provided in 'dot' notation - i.e "some.example.path"
     * @params {string} path dot notation path to field to search for
-    * @returns {Field} field returns a field class
+    * @return {Field} field returns a field class
     */
     getFieldByPath(path) {
         let pathParts = path.split('.')

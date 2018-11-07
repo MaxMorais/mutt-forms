@@ -216,8 +216,6 @@ export class Widget {
     * information of null if no errors are present
     */
     renderErrors() {
-        console.log('rendering errors', this.name)
-
         if (this.errors.length > 0) {
             let errorList = document.createElement('ul')
             errorList.className = this.getErrorClass()
@@ -247,7 +245,6 @@ export class Widget {
         if (!this._rendered) {
             return
         }
-        console.log('refresherrorstate:', this.name, this.errors)
 
         let elementWrapper = this.getElementWrapper()
         let errorElement = this.getElementError()
@@ -295,7 +292,7 @@ export class Widget {
     * @return {HTMLElement} the error element on the stage
     */
     getElementError() {
-        return this.getElementWrapper().querySelector('.mutt-error')
+        return document.querySelector(`#${this.id} > .mutt-error`)
     }
 
     /**
