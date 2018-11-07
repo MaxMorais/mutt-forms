@@ -1,5 +1,7 @@
 'use strict'
 
+// TODO: Update tests to render form in page to correctly test DOM output
+
 import Mutt from '../src/index'
 
 describe('Object Field', () => {
@@ -978,7 +980,7 @@ describe('Object Field', () => {
             })
 
             // TODO: remove this test once validate
-            describe.only('Policy Example', () => {
+            describe('Policy Example', () => {
                 beforeEach(()=> {
                     schema = require('./fixtures/schema.json')
                 })
@@ -991,23 +993,19 @@ describe('Object Field', () => {
                     // set the vet_registered to be true
                     document.querySelector('[name=vet_registered]').click()
 
-                    const validateResult = form.validate()
-
-                    // console.log(JSON.stringify(form, (key, value) => {
-                    //     if (key === 'parent' || key === '_field') {
-                    //         return '[Circular]'
-                    //     }
-
-                    //     return value
-                    // }, 2))
-
-                    console.log(document.getElementById('insured_entities_1_vet_name'))
+                    let validateResult = form.validate()
 
                     expect(document.getElementById('insured_entities_1_vet_name').classList.contains('mutt-error-wrapper')).toBe(true)
-
                     expect(validateResult).toBe(false)
-
                     expect(form.getFieldByPath('insured_entities.0.vet_registered').errors).toEqual(['Data should match one schema in "oneOf"'])
+
+                    // set the value of a required dependent field
+                    document.querySelector('[name=vet_name]').value = 'test'
+
+                    validateResult = form.validate()
+
+                    // check the previously applied error has been removed
+                    expect(document.getElementById('insured_entities_1_vet_name').classList.contains('mutt-error-wrapper')).toBe(false)
                 })
             })
         })

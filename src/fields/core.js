@@ -172,6 +172,11 @@ export class Field {
             this._validateDependencies(this.dependencies, value)
         }
 
+        // if the parent field of dependencies is valid, we need to refresh state of dependency fields
+        if (this.errors.length === 0 && this.dependencies && this.parent) {
+            this._refreshDependenciesValidationState(this.dependencies)
+        }
+
         if (this.errors.length > 0) {
             this.widget.refreshErrorState(this.errors)
             return false
@@ -185,16 +190,33 @@ export class Field {
      *
      * @param {string[]|Object} dependencies
      * @param {string} value
+     * @return {boolean}
      * @memberof Field
      */
     _validateDependencies(dependencies, value) {
+        const validateFields = (fields) => {
+            let errors = []
+
+            for (const fieldName of fields) {
+                let field = this.parent.getFieldByPath(fieldName)
+
+                if (field && !field.validate()) {
+                    errors.push(`${field.name}: ${field.errors.join(',')}`)
+                }
+            }
+
+            return errors
+        }
+
+        let dependenciesValid = true
+
         if (!Array.isArray(dependencies) && typeof dependencies === 'object' && dependencies.constructor === Object) {
             let validationResults = {}
 
-            for (const type in dependencies) {
-                if (dependencies.hasOwnProperty(type)) {
+            for (const dependencyType in dependencies) {
+                if (dependencies.hasOwnProperty(dependencyType)) {
                     // Validate each combination option
-                    validationResults[type] = dependencies[type].map((option) => {
+                    validationResults[dependencyType] = dependencies[dependencyType].map((option) => {
                         let errors = []
 
                         // we need to check the value against the option's enum
@@ -206,7 +228,7 @@ export class Field {
                         }
 
                         if (typeof option.required !== 'undefined' &&
-                            this._validateFields(option.required).length !== 0) {
+                            validateFields(option.required).length !== 0) {
                             return false
                         }
 
@@ -215,23 +237,26 @@ export class Field {
 
                     // TODO: split into function
                     // Update the results object with the correct values depending on the combination
-                    switch (type) {
+                    switch (dependencyType) {
                     case 'oneOf':
                         // For oneOf, results array should only have one 'true'
-                        if (validationResults[type].filter((result) => result).length !== 1) {
+                        if (validationResults[dependencyType].filter((result) => result).length !== 1) {
                             this.errors = 'Data should match one schema in "oneOf"'
+                            dependenciesValid = false
                         }
                         break
                     case 'anyOf':
                         // For anyOf, results array should have at least one 'true'
-                        if (!validationResults[type].some((result) => result)) {
+                        if (!validationResults[dependencyType].some((result) => result)) {
                             this.errors = 'Data should match at least one schema in "anyOf"'
+                            dependenciesValid = false
                         }
                         break
                     case 'allOf':
                         // For allOf, results array should have all 'true'
-                        if (!validationResults[type].every((result) => result)) {
+                        if (!validationResults[dependencyType].every((result) => result)) {
                             this.errors = 'Data should match all schema in "allOf"'
+                            dependenciesValid = false
                         }
                         break
                     default:
@@ -241,31 +266,47 @@ export class Field {
             }
         } else {
             // We need to check the dependancies of a field
-            for (const error of this._validateFields(dependencies)) {
+            for (const error of validateFields(dependencies)) {
                 this.errors = error
+                dependenciesValid = false
             }
         }
+
+        return dependenciesValid
     }
 
     /**
-     * Calls validation on a set of fields and returns any errors
+     * Resets dependency field vaildation states
      *
-     * @param {string[]} fields the field to be validated
-     * @return {string[]} an array of errors
+     * @param {string[]|Object} dependencies
      * @memberof Field
      */
-    _validateFields(fields) {
-        let errors = []
+    _refreshDependenciesValidationState(dependencies) {
+        const refreshFieldsValidationState = (fields) => {
+            for (const fieldName of fields) {
+                let field = this.parent.getFieldByPath(fieldName)
 
-        for (const fieldName of fields) {
-            let field = this.parent.getFieldByPath(fieldName)
-
-            if (field && !field.validate()) {
-                errors.push(`${field.name}: ${field.errors.join(',')}`)
+                if (field) {
+                    field.refreshValidationState()
+                }
             }
         }
 
-        return errors
+        if (!Array.isArray(dependencies) &&
+            typeof dependencies === 'object' &&
+            dependencies.constructor === Object) {
+            for (const dependencyType in dependencies) {
+                if (dependencies.hasOwnProperty(dependencyType)) {
+                    for (const option of dependencies[dependencyType]) {
+                        if (typeof option.required !== 'undefined') {
+                            refreshFieldsValidationState(option.required)
+                        }
+                    }
+                }
+            }
+        } else {
+            refreshFieldsValidationState(dependencies)
+        }
     }
 
     /**
