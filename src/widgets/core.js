@@ -38,7 +38,7 @@ export class Widget {
 
     /**
     * Render the HTML widget
-    * @returns {DocumentFragment} Rendered widget as a document fragment
+    * @return {DocumentFragment} Rendered widget as a document fragment
     */
     render() {
         // Create a fragment for our widget
@@ -76,7 +76,7 @@ export class Widget {
 
     /**
     * Remove the widget from the stage
-    * @returns true on success
+    * @return true on success
     */
     destroy() {
         let wrapper = this.getElementWrapper()
@@ -87,7 +87,7 @@ export class Widget {
     /**
     * Callback to the widget after the widget has been rendered
     * to the stage
-    * @returns by default, nothing is returned.
+    * @return by default, nothing is returned.
     */
     postRender() {
         // Default is to do nothing...
@@ -96,7 +96,7 @@ export class Widget {
 
     /**
      * Lock the widget - this places it in a read only state
-     * @returns {bool} returns true if lock is successful, false otherwise
+     * @return {bool} returns true if lock is successful, false otherwise
      */
     lock() {
         if (this.locked) {
@@ -117,7 +117,7 @@ export class Widget {
     /**
      * Unlock the widget - this removes any previous lock and returns
      * it to it's default state.
-     * @returns {bool} returns true if unlock is successful, false otherwise
+     * @return {bool} returns true if unlock is successful, false otherwise
      */
     unlock() {
         if (!this.locked) {
@@ -168,7 +168,7 @@ export class Widget {
 
     /**
     * Render the field wrapper
-    * @returns {HTMLElement} HTML element used for wrapping widget
+    * @return {HTMLElement} HTML element used for wrapping widget
     */
     renderWrapper() {
         let wrapper = document.createElement('div')
@@ -179,7 +179,7 @@ export class Widget {
 
     /**
     * Render the field label
-    * @returns {HTMLElement} returns a HTML label element or null if no
+    * @return {HTMLElement} returns a HTML label element or null if no
     * label is configured for the widget
     */
     renderLabel() {
@@ -196,7 +196,7 @@ export class Widget {
 
     /**
     * Render the help field
-    * @returns {HTMLElement} returns a HTML span element or null if no
+    * @return {HTMLElement} returns a HTML span element or null if no
     * help text is configured for the widget
     */
     renderHelp() {
@@ -212,10 +212,12 @@ export class Widget {
 
     /**
     * Render the field error information
-    * @returns {HTMLElement} returns a HTML list element with error
+    * @return {HTMLElement} returns a HTML list element with error
     * information of null if no errors are present
     */
     renderErrors() {
+        console.log('rendering errors', this.name)
+
         if (this.errors.length > 0) {
             let errorList = document.createElement('ul')
             errorList.className = this.getErrorClass()
@@ -241,9 +243,11 @@ export class Widget {
     refreshErrorState(errors) {
         this.errors = errors
 
+
         if (!this._rendered) {
             return
         }
+        console.log('refresherrorstate:', this.name, this.errors)
 
         let elementWrapper = this.getElementWrapper()
         let errorElement = this.getElementError()
@@ -305,7 +309,7 @@ export class Widget {
     /**
     * Get the value of an element on the stage. This is the raw value
     * as specified in the HTML.
-    * @returns {string} value of the element on the stage
+    * @return {string} value of the element on the stage
     */
     getValue() {
         if (!this._rendered) {
@@ -343,7 +347,7 @@ export class Widget {
 
     /**
     * Get the class name for the widget element
-    * @returns {string} the class to use for the field element
+    * @return {string} the class to use for the field element
     */
     getFieldClass() {
         if (this.attribs.hasOwnProperty('class')) {
@@ -355,21 +359,27 @@ export class Widget {
 
     /**
     * Get the class name for the widget wrapper
-    * @returns {string} the class to use for the wrapper element
+    * @return {string} the class to use for the wrapper element
     */
-    getFieldWrapperClass() { return 'mutt-field-wrapper' }
+    getFieldWrapperClass() {
+        return 'mutt-field-wrapper'
+    }
 
     /**
     * Get the class name for the error
-    * @returns {string} the class to use for the error element
+    * @return {string} the class to use for the error element
     */
-    getErrorClass() { return 'mutt-error' }
+    getErrorClass() {
+        return 'mutt-error'
+    }
 
     /**
     * Get the class name for the error wrapper
-    * @returns {string} the class to use for the error wrapper element
+    * @return {string} the class to use for the error wrapper element
     */
-    getErrorWrapperClass() { return 'mutt-error-wrapper' }
+    getErrorWrapperClass() {
+        return 'mutt-error-wrapper'
+    }
 
     /**
     * Get the field ID
