@@ -15,7 +15,7 @@ describe('Array Field', () => {
                     email: {
                         type: 'string',
                     },
-                }
+                },
             },
         }
 
@@ -25,7 +25,7 @@ describe('Array Field', () => {
             },
         }
 
-        const field =  Mutt.fields.ArrayField.new(
+        const field = Mutt.fields.ArrayField.new(
             'test',
             'test',
             schema,
@@ -64,7 +64,7 @@ describe('Array Field', () => {
         ])
     })
 
-    test('arrays support anyOf syntax for child components', () => {
+    xtest('arrays support anyOf syntax for child components', () => {
         const schema = {
             type: 'array',
             items: {
@@ -91,13 +91,13 @@ describe('Array Field', () => {
                         },
                         required: [
                             'telephone',
-                        ]
+                        ],
                     },
-                ]
+                ],
             },
         }
 
-        const field =  Mutt.fields.ArrayField.new(
+        const field = Mutt.fields.ArrayField.new(
             'test',
             'test',
             schema,

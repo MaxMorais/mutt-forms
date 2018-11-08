@@ -38,7 +38,7 @@ export class ArrayField extends Field {
 
         this.minItems = minItems
         this.maxItems = (maxItems >= minItems) ? maxItems : null
-        this.itemSchema = resolveSchema(items) // schema to make new items
+        this.itemSchema = items
         this.itemOptions = options
 
         // We store the array fields as slots
@@ -100,7 +100,7 @@ export class ArrayField extends Field {
     /**
     * Remove slot
     * @param [updateWidget] Update the widget attached to the field
-    * @returns {bool} success of the removal of a slot
+    * @return {bool} success of the removal of a slot
     */
     removeSlot(updateWidget = true) {
         if (this.slots.length === 0) {
@@ -120,7 +120,7 @@ export class ArrayField extends Field {
     * Remove a slot from inside the slot array
     * @param index Index of slot to remove from array
     * @param [updateWidget] Update the widget attached to the field
-    * @returns {bool} success of the removal of a slot
+    * @return {bool} success of the removal of a slot
     */
     spliceSlot(index, updateWidget = true) {
         if (this.slots.length === 0) {
@@ -243,7 +243,7 @@ export class ArrayField extends Field {
 
     /**
     * Validate the form field
-    * @returns {bool} returns sucess or failure of validation
+    * @return {bool} returns sucess or failure of validation
     */
     validate() {
         this.refreshValidationState()
