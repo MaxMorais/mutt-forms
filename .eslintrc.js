@@ -5,8 +5,8 @@ module.exports = {
   "plugins": ["prettier"],
   "parser": "babel-eslint",
   "env": {
-      "browser": true,
-      "es6": true
+      "es6": true,
+      "node": true
   },
   "rules": {
     "require-jsdoc": ["warn", {
