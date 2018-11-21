@@ -237,7 +237,7 @@ class MuttConfig {
      * Get currently configured widgets
      * @param {object} widgets object of currently configured widgets
      */
-    getWidgets(name) {
+    getWidgets() {
         return this._config.widgets;
     }
 
@@ -291,7 +291,7 @@ class MuttConfig {
      * Get currently configured serializers
      * @param {object} serializers object of currently configured serilizers
      */
-    getSerializers(name) {
+    getSerializers() {
         return this._config.serializers;
     }
 }

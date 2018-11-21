@@ -47,7 +47,7 @@ export function resolveSchema(schema) {
  * of array. That means, should you add duplicate types, this will
  * be ignored and the last type will win.
  */
-export function mergeAllOf(allOfList, additionalProperties = false) {
+export function mergeAllOf(allOfList) {
     return merge.all(allOfList);
 }
 
@@ -57,6 +57,6 @@ export function mergeAllOf(allOfList, additionalProperties = false) {
  */
 export function logger(message) {
     if (Mutt.config.getSetting("debug")) {
-        console.log("Mutt :: ", message);
+        console.log("Mutt :: ", message); // eslint-disable-line no-console
     }
 }

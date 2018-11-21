@@ -307,8 +307,7 @@ export class Field {
         schema,
         options = {},
         parent = null,
-        required = false,
-        dependancies = null
+        required = false
     ) {
         let fieldSpec = {
             id: id,

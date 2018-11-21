@@ -143,7 +143,7 @@ class MuttForm {
         // Save the mount point...
         this.mount = mount;
 
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             let formContainer = document.createDocumentFragment();
             this.form = document.createElement("form");
 

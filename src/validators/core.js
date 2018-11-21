@@ -16,7 +16,7 @@ export class Validator {
         Object.assign(this.messages, messages);
     }
 
-    validate(value) {
+    validate() {
         return true;
     }
 }
