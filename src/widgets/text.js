@@ -1,39 +1,40 @@
 /**
-* @file Text input widget interface
-*/
+ * @file Text input widget interface
+ */
 
-'use strict'
+"use strict";
 
-import {Widget} from './core'
+import { Widget } from "./core";
 
 /**
  * TextInput - Standard HTML text input
  * @class
  */
 export class TextInput extends Widget {
-
     /**
-    * Render the text input field
-    * @returns {HTMLElement} render the input widget
-    */
+     * Render the text input field
+     * @returns {HTMLElement} render the input widget
+     */
     renderField() {
-        let textInput = document.createElement('input')
-        textInput.setAttribute('name', this.name)
-        textInput.setAttribute('type', 'text')
-        textInput.setAttribute('value', (this.value) ? this.value : '')
-        textInput.setAttribute('class', this.getFieldClass())
+        let textInput = document.createElement("input");
+        textInput.setAttribute("name", this.name);
+        textInput.setAttribute("type", "text");
+        textInput.setAttribute("value", this.value ? this.value : "");
+        textInput.setAttribute("class", this.getFieldClass());
 
         for (const attrib in this.attribs) {
-            textInput.setAttribute(attrib, this.attribs[attrib])
+            textInput.setAttribute(attrib, this.attribs[attrib]);
         }
 
-        return textInput
+        return textInput;
     }
 
     /**
      * Get the class name for the widget element
      */
-    getFieldClass() { return 'mutt-field mutt-field-text' }
+    getFieldClass() {
+        return "mutt-field mutt-field-text";
+    }
 }
 
 /**
@@ -42,25 +43,27 @@ export class TextInput extends Widget {
  */
 export class TextAreaInput extends Widget {
     /**
-    * Render the text input field
-    */
+     * Render the text input field
+     */
     renderField() {
-        let textareaInput = document.createElement('textarea')
-        textareaInput.setAttribute('name', this.name)
-        textareaInput.setAttribute('class', this.getFieldClass())
-        textareaInput.textContent = (this.value) ? this.value : ''
+        let textareaInput = document.createElement("textarea");
+        textareaInput.setAttribute("name", this.name);
+        textareaInput.setAttribute("class", this.getFieldClass());
+        textareaInput.textContent = this.value ? this.value : "";
 
         for (const attrib in this.attribs) {
-            textareaInput.setAttribute(attrib, this.attribs[attrib])
+            textareaInput.setAttribute(attrib, this.attribs[attrib]);
         }
 
-        return textareaInput
+        return textareaInput;
     }
 
     /**
-    * Get the class name for the widget element
-    */
-    getFieldClass() { return 'mutt-field mutt-field-text' }
+     * Get the class name for the widget element
+     */
+    getFieldClass() {
+        return "mutt-field mutt-field-text";
+    }
 }
 
 /**
@@ -69,26 +72,28 @@ export class TextAreaInput extends Widget {
  */
 export class EmailInput extends TextInput {
     /**
-    * Render the text input field
-    */
+     * Render the text input field
+     */
     renderField() {
-        let textInput = document.createElement('input')
-        textInput.setAttribute('name', this.name)
-        textInput.setAttribute('type', 'email')
-        textInput.setAttribute('value', (this.value) ? this.value : '')
-        textInput.setAttribute('class', this.getFieldClass())
+        let textInput = document.createElement("input");
+        textInput.setAttribute("name", this.name);
+        textInput.setAttribute("type", "email");
+        textInput.setAttribute("value", this.value ? this.value : "");
+        textInput.setAttribute("class", this.getFieldClass());
 
         for (const attrib in this.attribs) {
-            textInput.setAttribute(attrib, this.attribs[attrib])
+            textInput.setAttribute(attrib, this.attribs[attrib]);
         }
 
-        return textInput
+        return textInput;
     }
 
     /**
-    * Get the class name for the widget element
-    */
-    getFieldClass() { return 'mutt-field mutt-field-email' }
+     * Get the class name for the widget element
+     */
+    getFieldClass() {
+        return "mutt-field mutt-field-email";
+    }
 }
 
 /**
@@ -97,39 +102,39 @@ export class EmailInput extends TextInput {
  */
 export class HiddenInput extends Widget {
     constructor(field, type, id, name, label, attribs, options, value) {
-        super(field, type, id, name, label, attribs, options, value)
-        this.choices = []
+        super(field, type, id, name, label, attribs, options, value);
+        this.choices = [];
     }
 
     /**
      * Render the text input field
      */
     renderField() {
-        let textInput = document.createElement('input')
-        textInput.setAttribute('name', this.name)
-        textInput.setAttribute('type', 'hidden')
-        textInput.setAttribute('value', (this.value) ? this.value : '')
-        textInput.setAttribute('class', this.getFieldClass())
+        let textInput = document.createElement("input");
+        textInput.setAttribute("name", this.name);
+        textInput.setAttribute("type", "hidden");
+        textInput.setAttribute("value", this.value ? this.value : "");
+        textInput.setAttribute("class", this.getFieldClass());
 
         for (const attrib in this.attribs) {
-            textInput.setAttribute(attrib, this.attribs[attrib])
+            textInput.setAttribute(attrib, this.attribs[attrib]);
         }
 
-        return textInput
+        return textInput;
     }
 
     /**
      * Label is not used for hidden fields
      */
     renderLabel() {
-        return null
+        return null;
     }
 
     /**
      * Errors are not shown for hidden fields
      */
     renderErrors() {
-        return null
+        return null;
     }
 
     /**
@@ -137,15 +142,15 @@ export class HiddenInput extends Widget {
      * @params {array}
      */
     setChoices(choices) {
-        this.choices = choices
+        this.choices = choices;
     }
 
     /**
-    * Get the choices used by the widget
-    * @returns {array} choice pair array
-    */
+     * Get the choices used by the widget
+     * @returns {array} choice pair array
+     */
     getChoices() {
-        return this.choices
+        return this.choices;
     }
 }
 
@@ -158,23 +163,25 @@ export class PasswordInput extends TextInput {
      * Render the text input field
      */
     renderField() {
-        let textInput = document.createElement('input')
-        textInput.setAttribute('name', this.name)
-        textInput.setAttribute('type', 'password')
-        textInput.setAttribute('value', (this.value) ? this.value : '')
-        textInput.setAttribute('class', this.getFieldClass())
+        let textInput = document.createElement("input");
+        textInput.setAttribute("name", this.name);
+        textInput.setAttribute("type", "password");
+        textInput.setAttribute("value", this.value ? this.value : "");
+        textInput.setAttribute("class", this.getFieldClass());
 
         for (const attrib in this.attribs) {
-            textInput.setAttribute(attrib, this.attribs[attrib])
+            textInput.setAttribute(attrib, this.attribs[attrib]);
         }
 
-        return textInput
+        return textInput;
     }
 
     /**
-    * Get the class name for the widget element
-    */
-    getFieldClass() { return 'mutt-field mutt-field-password' }
+     * Get the class name for the widget element
+     */
+    getFieldClass() {
+        return "mutt-field mutt-field-password";
+    }
 }
 
 /**
@@ -182,13 +189,13 @@ export class PasswordInput extends TextInput {
  * plain text. Typically used by the lock form utility.
  */
 export function displayReadonlyValue(value) {
-    let display = document.createElement('span')
+    let display = document.createElement("span");
 
     // TODO: Support for the class being set dynamically
-    display.setAttribute('class', 'mutt-field mutt-field-display')
-    display.textContent = value
+    display.setAttribute("class", "mutt-field mutt-field-display");
+    display.textContent = value;
 
-    return display
+    return display;
 }
 
 /**
@@ -197,14 +204,16 @@ export function displayReadonlyValue(value) {
  */
 export class DisplayWidget extends Widget {
     /**
-    * Render the text input field
-    */
+     * Render the text input field
+     */
     renderField() {
-        return displayReadonlyValue(this.value)
+        return displayReadonlyValue(this.value);
     }
 
     /**
-    * Get the class name for the widget element
-    */
-    getFieldClass() { return 'mutt-field mutt-field-display' }
+     * Get the class name for the widget element
+     */
+    getFieldClass() {
+        return "mutt-field mutt-field-display";
+    }
 }

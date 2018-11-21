@@ -2,10 +2,10 @@
  * @file Button Field
  */
 
-'use strict'
+"use strict";
 
-import Mutt from '../index'
-import {Field} from './core'
+import Mutt from "../index";
+import { Field } from "./core";
 
 /**
  * Button field, used to add custom actions to form elements
@@ -17,6 +17,6 @@ export class ButtonField extends Field {
      * @returns {Widget}
      */
     getWidget() {
-        return Mutt.config.getWidget('button')
+        return Mutt.config.getWidget("button");
     }
 }

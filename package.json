@@ -73,6 +73,7 @@
     "build": "rollup -c",
     "test": "jest",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepublish": "npm run build"
   }
 }

@@ -2,13 +2,13 @@
  * @file Main Core Field class
  */
 
-'use strict'
+"use strict";
 
-import Mutt from '../index'
+import Mutt from "../index";
 import {
     RequiredValidator,
-    BooleanRequiredValidator,
-} from '../validators/core'
+    BooleanRequiredValidator
+} from "../validators/core";
 
 /**
  * Base Field class, this is used as a base interface for
@@ -31,31 +31,41 @@ export class Field {
      * @param {integer} [order] order flag for sorting multiple fields
      * @param {Field} [parent] parent a parent field
      */
-    constructor({id, name, label = null, initial = null, widget = null,
-        validators = [], attribs = {}, description = null, options = {},
-        order = null, parent = null}) {
-        this.id = id
-        this.name = name
-        this.label = label
-        this.description = description
-        this.attribs = attribs
-        this.options = options
-        this.validators = validators
-        this.sortOrder = order
-        this.locked = false
-        this.parent = parent
+    constructor({
+        id,
+        name,
+        label = null,
+        initial = null,
+        widget = null,
+        validators = [],
+        attribs = {},
+        description = null,
+        options = {},
+        order = null,
+        parent = null
+    }) {
+        this.id = id;
+        this.name = name;
+        this.label = label;
+        this.description = description;
+        this.attribs = attribs;
+        this.options = options;
+        this.validators = validators;
+        this.sortOrder = order;
+        this.locked = false;
+        this.parent = parent;
 
         if (!this.label) {
-            this.label = this.name
+            this.label = this.name;
         }
 
-        this.initOptions()
+        this.initOptions();
 
         // Setup the widget
-        let WidgetKlass = this.getWidget()
+        let WidgetKlass = this.getWidget();
 
         if (widget) {
-            WidgetKlass = widget
+            WidgetKlass = widget;
         }
 
         this.widget = new WidgetKlass(
@@ -67,23 +77,23 @@ export class Field {
             this.attribs,
             this.options,
             initial
-        )
+        );
 
-        this._errors = []
+        this._errors = [];
     }
 
     /**
      * Enable the options on the field
      */
     initOptions() {
-        if (this.options.hasOwnProperty('order')) {
-            this.sortOrder = this.options.order
+        if (this.options.hasOwnProperty("order")) {
+            this.sortOrder = this.options.order;
         }
-        if (this.options.hasOwnProperty('label')) {
-            this.label = this.options.label
+        if (this.options.hasOwnProperty("label")) {
+            this.label = this.options.label;
         }
-        if (this.options.hasOwnProperty('description')) {
-            this.description = this.options.description
+        if (this.options.hasOwnProperty("description")) {
+            this.description = this.options.description;
         }
     }
 
@@ -92,59 +102,59 @@ export class Field {
      * but is included for subclasses who may use this)
      */
     get type() {
-        let type = this.constructor.name.toLowerCase()
-        return (type !== 'field') ? type.replace('field', '') : type
+        let type = this.constructor.name.toLowerCase();
+        return type !== "field" ? type.replace("field", "") : type;
     }
 
     set type(someType) {
-        throw new Error('Unable to set type on a field instance!')
+        throw new Error("Unable to set type on a field instance!");
     }
 
     /**
-    * Property - get/set value
-    */
+     * Property - get/set value
+     */
     get value() {
-        return this.widget.getValue()
+        return this.widget.getValue();
     }
 
     set value(value) {
-        this.widget.setValue(value)
+        this.widget.setValue(value);
     }
 
     /**
-    * Property - get/set errors
-    * @param {string} Error string
-    */
+     * Property - get/set errors
+     * @param {string} Error string
+     */
     get errors() {
-        return this._errors
+        return this._errors;
     }
 
     set errors(error) {
-        this._errors.push(error)
+        this._errors.push(error);
     }
 
     /**
-    * Render the form field using it's widget interface
-    * @returns {DocumentFragment} rendered HTML widget
-    */
+     * Render the form field using it's widget interface
+     * @returns {DocumentFragment} rendered HTML widget
+     */
     render() {
-        return this.widget.render()
+        return this.widget.render();
     }
 
     /**
-    * Destroy the rendered widget
-    * @returns the success or failure response
-    */
+     * Destroy the rendered widget
+     * @returns the success or failure response
+     */
     destroy() {
-        return this.widget.destroy()
+        return this.widget.destroy();
     }
 
     /**
      * Callback to the field after it has been rendered to
      * the stage
-    */
+     */
     postRender() {
-        this.widget.postRender()
+        this.widget.postRender();
     }
 
     /**
@@ -152,128 +162,128 @@ export class Field {
      */
     validate() {
         // Clear any previous validations
-        this.refreshValidationState()
+        this.refreshValidationState();
 
-        let value = this.value
+        let value = this.value;
         for (let validator of this.validators) {
             if (!validator.validate(value)) {
-                this.errors = validator.error
-                break
+                this.errors = validator.error;
+                break;
             }
         }
 
         if (this.errors.length > 0) {
-            this.widget.refreshErrorState(this.errors)
-            return false
+            this.widget.refreshErrorState(this.errors);
+            return false;
         }
 
-        return true
+        return true;
     }
 
     /**
-    * Turn the field from an editable elment to a readonly one
-    */
+     * Turn the field from an editable elment to a readonly one
+     */
     lock() {
         if (this.locked) {
-            return false
+            return false;
         }
 
-        this.widget.lock()
-        this.locked = true
+        this.widget.lock();
+        this.locked = true;
 
-        return true
+        return true;
     }
 
     /*
-    * Restore a field from a locked state
-    */
+     * Restore a field from a locked state
+     */
     unlock() {
         if (!this.locked) {
-            return false
+            return false;
         }
 
-        this.widget.unlock()
-        this.locked = false
+        this.widget.unlock();
+        this.locked = false;
 
-        return true
+        return true;
     }
 
     /**
-    * Refresh the validation state
-    */
+     * Refresh the validation state
+     */
     refreshValidationState(update = true) {
-        this._errors = []
-        this.widget.errors = []
+        this._errors = [];
+        this.widget.errors = [];
 
         if (update) {
-            this.widget.refreshErrorState([])
+            this.widget.refreshErrorState([]);
         }
     }
 
     /**
-    * Get the widget class used to render the field
-    * @return TextInput widget
-    */
+     * Get the widget class used to render the field
+     * @return TextInput widget
+     */
     getWidget() {
-        return Mutt.config.getWidget('text')
+        return Mutt.config.getWidget("text");
     }
 
     /**
-    * Get the sort order of the field. This is used when
-    * rendering groups of fields.
-    */
+     * Get the sort order of the field. This is used when
+     * rendering groups of fields.
+     */
     getSortOrder() {
-        return this.sortOrder
+        return this.sortOrder;
     }
 
     /**
      * Get the value in a serialized format.
      */
     getSerializedValue() {
-        if (this.options.hasOwnProperty('serialize')) {
-            const serializeArgs = this.options.serialize
-            let serializeKey
-            let serializeOptions = {}
+        if (this.options.hasOwnProperty("serialize")) {
+            const serializeArgs = this.options.serialize;
+            let serializeKey;
+            let serializeOptions = {};
 
-            if (typeof serializeArgs === 'object') {
-                serializeKey = serializeArgs.name
-                serializeOptions = serializeArgs
+            if (typeof serializeArgs === "object") {
+                serializeKey = serializeArgs.name;
+                serializeOptions = serializeArgs;
             } else {
-                serializeKey = serializeArgs
+                serializeKey = serializeArgs;
             }
 
             if (Mutt.config.hasSerializer(serializeKey)) {
-                const Serializer = Mutt.config.getSerializer(serializeKey)
-                return new Serializer(this.value, serializeOptions).serialize()
+                const Serializer = Mutt.config.getSerializer(serializeKey);
+                return new Serializer(this.value, serializeOptions).serialize();
             }
         } else {
-            return this.value
+            return this.value;
         }
     }
 
     /**
-    * Set the internal sort order for a field.
-    */
+     * Set the internal sort order for a field.
+     */
     setSortOrder(order) {
-        this.sortOrder = order
+        this.sortOrder = order;
     }
 
     /**
-    * Display field as a string representation
-    */
+     * Display field as a string representation
+     */
     toString() {
-        return `Field <${this.name} ${this.type}>`
+        return `Field <${this.name} ${this.type}>`;
     }
 
     /**
-    *
-    */
+     *
+     */
     updateId(newId, updateWidget = true) {
-        let oldId = this.id
-        this.id = newId
+        let oldId = this.id;
+        this.id = newId;
 
         if (updateWidget) {
-            this.widget.updateId(oldId, newId)
+            this.widget.updateId(oldId, newId);
         }
     }
 
@@ -281,122 +291,131 @@ export class Field {
      *
      */
     updateName(newName, updateWidget = true) {
-        this.name = newName
+        this.name = newName;
 
         if (updateWidget) {
-            this.widget.updateName(newName)
+            this.widget.updateName(newName);
         }
     }
 
     /**
      *
      */
-    static new(id, name, schema, options = {},
-        parent = null, required = false, dependancies = null) {
+    static new(
+        id,
+        name,
+        schema,
+        options = {},
+        parent = null,
+        required = false,
+        dependancies = null
+    ) {
         let fieldSpec = {
             id: id,
             name: name,
             options: options,
             attribs: {},
-            parent: parent,
-        }
+            parent: parent
+        };
 
-        let FieldKlass = null
-        let validators = []
+        let FieldKlass = null;
+        let validators = [];
 
         if (schema.description) {
-            fieldSpec.description = schema.description
+            fieldSpec.description = schema.description;
         }
 
         if (schema.title) {
-            fieldSpec.label = schema.title
+            fieldSpec.label = schema.title;
         }
 
         if (schema.default) {
-            fieldSpec.initial = schema.default
+            fieldSpec.initial = schema.default;
         }
 
         if (schema.enum) {
-            let choices = []
+            let choices = [];
 
             for (let option of schema.enum) {
-                choices.push([option, option])
+                choices.push([option, option]);
             }
 
-            fieldSpec.choices = choices
-            FieldKlass = Mutt.config.getField('enum')
+            fieldSpec.choices = choices;
+            FieldKlass = Mutt.config.getField("enum");
         }
 
         // This is awkward as we are trying to support the
         // legacy/Alpaca option format
-        if (options.hasOwnProperty('hidden')) {
+        if (options.hasOwnProperty("hidden")) {
             if (options.hidden) {
-                fieldSpec.widget = Mutt.config.getWidget('hidden')
+                fieldSpec.widget = Mutt.config.getWidget("hidden");
             }
         }
 
         if (schema.format) {
             if (Mutt.config.hasWidget(schema.format)) {
-                fieldSpec.widget = Mutt.config.getWidget(schema.format)
+                fieldSpec.widget = Mutt.config.getWidget(schema.format);
             }
         }
 
         if (options.widget) {
             if (Mutt.config.hasWidget(options.widget)) {
-                fieldSpec.widget = Mutt.config.getWidget(options.widget)
+                fieldSpec.widget = Mutt.config.getWidget(options.widget);
             }
         }
 
         if (schema.items) {
-            fieldSpec.items = schema.items
+            fieldSpec.items = schema.items;
         }
 
         if (schema.properties) {
-            fieldSpec.properties = schema.properties
+            fieldSpec.properties = schema.properties;
         }
 
         // Build validator list
-        if (required || (options.hasOwnProperty('required') &&
-            options.required)) {
-            if (schema.type === 'boolean') {
-                validators.push(new BooleanRequiredValidator())
+        if (
+            required ||
+            (options.hasOwnProperty("required") && options.required)
+        ) {
+            if (schema.type === "boolean") {
+                validators.push(new BooleanRequiredValidator());
             } else {
-                validators.push(new RequiredValidator())
+                validators.push(new RequiredValidator());
             }
 
-            fieldSpec.attribs.required = 'true'
+            fieldSpec.attribs.required = "true";
         }
 
         // If the schema contains a required attribute this should be
         // a list of required descendants - not the item itself
         if (schema.required) {
-            fieldSpec.required = schema.required
+            fieldSpec.required = schema.required;
         }
 
         if (options.validators) {
-            validators.unshift(...options.validators)
+            validators.unshift(...options.validators);
         }
 
-        if (schema.hasOwnProperty('minItems')) {
-            fieldSpec.minItems = schema.minItems
+        if (schema.hasOwnProperty("minItems")) {
+            fieldSpec.minItems = schema.minItems;
         }
 
-        if (schema.hasOwnProperty('maxItems')) {
-            fieldSpec.maxItems = schema.maxItems
+        if (schema.hasOwnProperty("maxItems")) {
+            fieldSpec.maxItems = schema.maxItems;
         }
 
-        fieldSpec.validators = validators
+        fieldSpec.validators = validators;
 
         if (!FieldKlass) {
             // Attempt to get the field spec
             if (!Mutt.config.hasField(schema.type)) {
-                return null
+                return null;
             }
 
-            FieldKlass = Mutt.config.getField(schema.type)
+            FieldKlass = Mutt.config.getField(schema.type);
         }
 
-        let field = new FieldKlass(fieldSpec)
-        return field
+        let field = new FieldKlass(fieldSpec);
+        return field;
     }
 }

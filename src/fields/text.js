@@ -2,10 +2,10 @@
  * @file Text Field
  */
 
-'use strict'
+"use strict";
 
-import Mutt from '../index'
-import {Field} from './core'
+import Mutt from "../index";
+import { Field } from "./core";
 
 /**
  * String Field, used to input text values
@@ -13,6 +13,6 @@ import {Field} from './core'
  */
 export class StringField extends Field {
     getWidget() {
-        return Mutt.config.getWidget('text')
+        return Mutt.config.getWidget("text");
     }
 }

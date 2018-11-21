@@ -4,12 +4,12 @@
  * @copyright Bought By Many 2018
  */
 
-'use strict'
+"use strict";
 
-import MuttForm from './mutt'
-import * as fields from './fields'
-import * as widgets from './widgets'
-import * as serializers from './serializers'
+import MuttForm from "./mutt";
+import * as fields from "./fields";
+import * as widgets from "./widgets";
+import * as serializers from "./serializers";
 
 /**
  * Internal registry for Mutt fields & widgets. This is used
@@ -29,7 +29,7 @@ class MuttConfig {
     constructor() {
         this._config = {
             settings: {
-                debug: false,
+                debug: false
             },
             fields: {
                 array: fields.ArrayField,
@@ -41,7 +41,7 @@ class MuttConfig {
                 string: fields.StringField,
                 date: fields.StringField,
                 datetime: fields.StringField,
-                button: fields.ButtonField,
+                button: fields.ButtonField
             },
             widgets: {
                 array: widgets.ArrayInput,
@@ -60,12 +60,12 @@ class MuttConfig {
                 hidden: widgets.HiddenInput,
                 password: widgets.PasswordInput,
                 display: widgets.DisplayWidget,
-                button: widgets.ButtonWidget,
+                button: widgets.ButtonWidget
             },
             serializers: {
-                trim: serializers.TrimSerializer,
-            },
-        }
+                trim: serializers.TrimSerializer
+            }
+        };
     }
 
     /**
@@ -74,10 +74,10 @@ class MuttConfig {
      */
     getSetting(name) {
         if (!this._config.settings.hasOwnProperty(name)) {
-            return null
+            return null;
         }
 
-        return this._config.settings[name]
+        return this._config.settings[name];
     }
 
     /**
@@ -85,7 +85,7 @@ class MuttConfig {
      * @param {string} name Name of setting
      */
     setSetting(name, value) {
-        this._config.settings[name] = value
+        this._config.settings[name] = value;
     }
 
     /**
@@ -94,35 +94,33 @@ class MuttConfig {
      */
     use(plugin) {
         // Check we can install the plugin
-        if (!plugin.hasOwnProperty('install')) {
-            throw new Error(
-                'Unable to install plugin - missing install!'
-            )
+        if (!plugin.hasOwnProperty("install")) {
+            throw new Error("Unable to install plugin - missing install!");
         }
 
-        let pluginComponents = {}
-        let pluginFeatures = plugin.install()
+        let pluginComponents = {};
+        let pluginFeatures = plugin.install();
 
         // NOTE: Support for legacy plugins returning an array
         if (Array.isArray(pluginFeatures)) {
-            let [fields, widgets, settings] = pluginFeatures
-            pluginComponents = {fields, widgets, settings}
+            let [fields, widgets, settings] = pluginFeatures;
+            pluginComponents = { fields, widgets, settings };
         } else {
-            pluginComponents = pluginFeatures
+            pluginComponents = pluginFeatures;
         }
 
         // Fields & Widgets allow for the extension of mutt default
         // fields & widgets
         if (pluginComponents.fields) {
-            this.registerFields(pluginComponents.fields)
+            this.registerFields(pluginComponents.fields);
         }
 
         if (pluginComponents.widgets) {
-            this.registerWidgets(pluginComponents.widgets)
+            this.registerWidgets(pluginComponents.widgets);
         }
 
         if (pluginComponents.serializers) {
-            this.registerSerializers(pluginComponents.serializers)
+            this.registerSerializers(pluginComponents.serializers);
         }
 
         // Settings
@@ -132,17 +130,17 @@ class MuttConfig {
             this._config.settings = Object.assign(
                 this._config.settings,
                 pluginComponents.settings
-            )
+            );
         }
 
         // Extensions
         // These allow for the MuttForm class to be extended
         // or overidden by plugins
         if (pluginComponents.extensions) {
-            Object.keys(pluginComponents.extensions).forEach((name) => {
-                let extension = pluginComponents.extensions[name]
-                MuttForm.prototype[name] = extension
-            })
+            Object.keys(pluginComponents.extensions).forEach(name => {
+                let extension = pluginComponents.extensions[name];
+                MuttForm.prototype[name] = extension;
+            });
         }
     }
 
@@ -153,7 +151,7 @@ class MuttConfig {
      * @param {Field} fieldKlass - field class to be used for type
      */
     registerField(type, fieldKlass) {
-        this._config.fields[type] = fieldKlass
+        this._config.fields[type] = fieldKlass;
     }
 
     /**
@@ -164,7 +162,7 @@ class MuttConfig {
     registerFields(fields) {
         if (fields) {
             for (let fieldType of Object.keys(fields)) {
-                this.registerField(fieldType, fields[fieldType])
+                this.registerField(fieldType, fields[fieldType]);
             }
         }
     }
@@ -176,9 +174,9 @@ class MuttConfig {
      */
     hasField(type) {
         if (this._config.fields.hasOwnProperty(type)) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     /**
@@ -187,9 +185,9 @@ class MuttConfig {
      */
     getField(type) {
         if (this._config.fields.hasOwnProperty(type)) {
-            return this._config.fields[type]
+            return this._config.fields[type];
         }
-        return null
+        return null;
     }
 
     /**
@@ -198,7 +196,7 @@ class MuttConfig {
      * @param {Widget} widgetKlass class of widget to be registered
      */
     registerWidget(name, widgetKlass) {
-        this._config.widgets[name] = widgetKlass
+        this._config.widgets[name] = widgetKlass;
     }
 
     /**
@@ -208,7 +206,7 @@ class MuttConfig {
     registerWidgets(widgets) {
         if (widgets) {
             for (const widgetName of Object.keys(widgets)) {
-                this.registerWidget(widgetName, widgets[widgetName])
+                this.registerWidget(widgetName, widgets[widgetName]);
             }
         }
     }
@@ -219,9 +217,9 @@ class MuttConfig {
      */
     hasWidget(name) {
         if (this._config.widgets.hasOwnProperty(name)) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     /**
@@ -230,9 +228,9 @@ class MuttConfig {
      */
     getWidget(name) {
         if (this._config.widgets.hasOwnProperty(name)) {
-            return this._config.widgets[name]
+            return this._config.widgets[name];
         }
-        return null
+        return null;
     }
 
     /**
@@ -240,7 +238,7 @@ class MuttConfig {
      * @param {object} widgets object of currently configured widgets
      */
     getWidgets(name) {
-        return this._config.widgets
+        return this._config.widgets;
     }
 
     /**
@@ -249,7 +247,7 @@ class MuttConfig {
      * @param {function} serializer class of widget to be registered
      */
     registerSerializer(name, serializer) {
-        this._config.serializers[name] = serializer
+        this._config.serializers[name] = serializer;
     }
 
     /**
@@ -262,7 +260,7 @@ class MuttConfig {
                 this.registerSerializer(
                     serializerName,
                     serializers[serializerName]
-                )
+                );
             }
         }
     }
@@ -273,9 +271,9 @@ class MuttConfig {
      */
     hasSerializer(name) {
         if (this._config.serializers.hasOwnProperty(name)) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
 
     /**
@@ -284,9 +282,9 @@ class MuttConfig {
      */
     getSerializer(name) {
         if (this._config.serializers.hasOwnProperty(name)) {
-            return this._config.serializers[name]
+            return this._config.serializers[name];
         }
-        return null
+        return null;
     }
 
     /**
@@ -294,8 +292,8 @@ class MuttConfig {
      * @param {object} serializers object of currently configured serilizers
      */
     getSerializers(name) {
-        return this._config.serializers
+        return this._config.serializers;
     }
 }
 
-export default MuttConfig
+export default MuttConfig;

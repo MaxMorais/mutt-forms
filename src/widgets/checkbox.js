@@ -2,9 +2,9 @@
  * @file Checkbox Widgets
  */
 
-'use strict'
+"use strict";
 
-import {Widget} from './core'
+import { Widget } from "./core";
 
 /**
  * CheckboxInput - Standard HTML checkbox
@@ -17,29 +17,29 @@ export class CheckboxInput extends Widget {
      * input field
      */
     renderField() {
-        let checkbox = document.createElement('input')
-        checkbox.setAttribute('name', this.name)
-        checkbox.setAttribute('id', this.getFieldId())
-        checkbox.setAttribute('type', 'checkbox')
-        checkbox.setAttribute('class', this.getFieldClass())
+        let checkbox = document.createElement("input");
+        checkbox.setAttribute("name", this.name);
+        checkbox.setAttribute("id", this.getFieldId());
+        checkbox.setAttribute("type", "checkbox");
+        checkbox.setAttribute("class", this.getFieldClass());
         checkbox.onchange = () => {
-            this.setValue(!checkbox.hasAttribute('checked'))
-        }
+            this.setValue(!checkbox.hasAttribute("checked"));
+        };
 
         if (this.value) {
-            checkbox.setAttribute('checked', 'checked')
+            checkbox.setAttribute("checked", "checked");
         }
 
         for (const attrib in this.attribs) {
-            checkbox.setAttribute(attrib, this.attribs[attrib])
+            checkbox.setAttribute(attrib, this.attribs[attrib]);
         }
 
         // Set the internal notification flag so
         // we know the field has now been rendered
         // to the stage
-        this._rendered = true
+        this._rendered = true;
 
-        return checkbox
+        return checkbox;
     }
 
     /**
@@ -49,14 +49,14 @@ export class CheckboxInput extends Widget {
      */
     getValue() {
         if (!this._rendered) {
-            return this.value
+            return this.value;
         }
 
-        if (this.getElement().hasAttribute('checked')) {
-            return true
+        if (this.getElement().hasAttribute("checked")) {
+            return true;
         }
 
-        return false
+        return false;
     }
 
     /**
@@ -66,28 +66,28 @@ export class CheckboxInput extends Widget {
      * @param {boolean} value - turn the checkbox on/off
      */
     setValue(value) {
-        this.value = value
+        this.value = value;
 
         if (!this._rendered) {
-            return
+            return;
         }
 
-        let element = this.getElement()
+        let element = this.getElement();
 
         if (element) {
-            let label = this.getElementLabel()
+            let label = this.getElementLabel();
 
             if (this.value) {
-                element.setAttribute('checked', 'checked')
+                element.setAttribute("checked", "checked");
 
                 if (label) {
-                    label.classList.add('mutt-field-checkbox-checked')
+                    label.classList.add("mutt-field-checkbox-checked");
                 }
             } else {
-                element.removeAttribute('checked')
+                element.removeAttribute("checked");
 
-                if(label) {
-                    label.classList.remove('mutt-field-checkbox-checked')
+                if (label) {
+                    label.classList.remove("mutt-field-checkbox-checked");
                 }
             }
         }
@@ -97,13 +97,15 @@ export class CheckboxInput extends Widget {
      * Get the class name for the widget element
      * @returns {string} the class to use for the field element
      */
-    getFieldClass() { return 'mutt-field mutt-field-checkbox' }
+    getFieldClass() {
+        return "mutt-field mutt-field-checkbox";
+    }
 
     /**
      * Get the checkbox ID
      */
     getFieldId() {
-        return `${this.id}-checkbox`
+        return `${this.id}-checkbox`;
     }
 }
 
@@ -112,11 +114,10 @@ export class CheckboxInput extends Widget {
  * @class
  */
 export class CheckboxList extends CheckboxInput {
-
     constructor(field, type, id, name, label, attribs, options, value) {
-        super(field, type, id, name, label, attribs, options, value)
+        super(field, type, id, name, label, attribs, options, value);
         if (!this.value) {
-            this.value = []
+            this.value = [];
         }
     }
 
@@ -125,49 +126,51 @@ export class CheckboxList extends CheckboxInput {
      * @returns {HTMLElement} returns the rendered HTML checkbox list
      */
     renderField() {
-        let list = document.createElement('ul')
-        list.setAttribute('id', this.getFieldId())
+        let list = document.createElement("ul");
+        list.setAttribute("id", this.getFieldId());
 
         for (let choice in this.choices) {
-            let listItem = document.createElement('li')
-            let checkbox = document.createElement('input')
+            let listItem = document.createElement("li");
+            let checkbox = document.createElement("input");
 
-            checkbox.setAttribute('type', 'checkbox')
-            checkbox.setAttribute('name', this.name)
-            checkbox.setAttribute('class', this.getFieldClass())
-            checkbox.setAttribute('data-index', choice)
-            checkbox.setAttribute('id', this.id + choice)
+            checkbox.setAttribute("type", "checkbox");
+            checkbox.setAttribute("name", this.name);
+            checkbox.setAttribute("class", this.getFieldClass());
+            checkbox.setAttribute("data-index", choice);
+            checkbox.setAttribute("id", this.id + choice);
 
-            if (this.options.hasOwnProperty('choices') &&
-                this.options['choices'][choice][1]) {
-                let label = document.createElement('label')
-                label.setAttribute('for', this.id + choice)
-                label.textContent = this.options['choices'][choice][1]
-                listItem.appendChild(label)
+            if (
+                this.options.hasOwnProperty("choices") &&
+                this.options["choices"][choice][1]
+            ) {
+                let label = document.createElement("label");
+                label.setAttribute("for", this.id + choice);
+                label.textContent = this.options["choices"][choice][1];
+                listItem.appendChild(label);
             }
 
             checkbox.onchange = () => {
                 this.setValueByIndex(
-                    !checkbox.hasAttribute('checked'),
-                    checkbox.getAttribute('data-index')
-                )
-            }
+                    !checkbox.hasAttribute("checked"),
+                    checkbox.getAttribute("data-index")
+                );
+            };
 
             if (this.value && this.value[choice]) {
-                checkbox.setAttribute('checked', 'checked')
+                checkbox.setAttribute("checked", "checked");
             }
 
             for (let attrib in this.attribs) {
-                checkbox.setAttribute(attrib, this.attribs[attrib])
+                checkbox.setAttribute(attrib, this.attribs[attrib]);
             }
 
-            listItem.appendChild(checkbox)
-            list.appendChild(listItem)
+            listItem.appendChild(checkbox);
+            list.appendChild(listItem);
         }
 
-        this._rendered = true
+        this._rendered = true;
 
-        return list
+        return list;
     }
 
     /**
@@ -177,22 +180,22 @@ export class CheckboxList extends CheckboxInput {
      */
     getValueByIndex(index) {
         if (!this._rendered) {
-            return this.value[index]
+            return this.value[index];
         }
 
-        let element = this.getElementByIndex(index)
+        let element = this.getElementByIndex(index);
 
         if (!element) {
-            throw new Error('Unable to get element!')
+            throw new Error("Unable to get element!");
         }
 
-        if (element.hasAttribute('checked')) {
-            this.value = true
+        if (element.hasAttribute("checked")) {
+            this.value = true;
         } else {
-            this.value = false
+            this.value = false;
         }
 
-        return this.value
+        return this.value;
     }
 
     /**
@@ -202,24 +205,24 @@ export class CheckboxList extends CheckboxInput {
      */
     getValue() {
         if (!this._rendered) {
-            return this.value
+            return this.value;
         }
 
-        let elements = this.getAllElements()
+        let elements = this.getAllElements();
 
         if (!elements) {
-            throw new Error('Unable to get elements!')
+            throw new Error("Unable to get elements!");
         }
 
         for (let index in Array.from(elements)) {
-            if (elements[index].hasAttribute('checked')) {
-                this.value[index] = true
+            if (elements[index].hasAttribute("checked")) {
+                this.value[index] = true;
             } else {
-                this.value[index] = false
+                this.value[index] = false;
             }
         }
 
-        return this.value
+        return this.value;
     }
 
     /**
@@ -228,17 +231,17 @@ export class CheckboxList extends CheckboxInput {
      * @param index [integer]
      */
     setValueByIndex(value, index) {
-        this.value[index] = value
+        this.value[index] = value;
         if (!this._rendered) {
-            return
+            return;
         }
 
-        let element = this.getElementByIndex(index)
+        let element = this.getElementByIndex(index);
         if (element) {
-            if(this.value[index]) {
-                element.setAttribute('checked', 'checked')
+            if (this.value[index]) {
+                element.setAttribute("checked", "checked");
             } else {
-                element.removeAttribute('checked')
+                element.removeAttribute("checked");
             }
         }
     }
@@ -248,26 +251,29 @@ export class CheckboxList extends CheckboxInput {
      * @param value
      */
     setValue(value) {
-        this.value = value
+        this.value = value;
         if (!this._rendered) {
-            return
+            return;
         }
 
-        let elements = this.getAllElements()
+        let elements = this.getAllElements();
         if (value.length === elements.length) {
-            elements[0].setAttribute('checked', 'checked')
+            elements[0].setAttribute("checked", "checked");
 
             for (let index in Array.from(elements)) {
                 if (this.value[index]) {
-                    elements[parseInt(index)].setAttribute('checked', 'checked')
+                    elements[parseInt(index)].setAttribute(
+                        "checked",
+                        "checked"
+                    );
                 } else {
-                    elements[parseInt(index)].removeAttribute('checked')
+                    elements[parseInt(index)].removeAttribute("checked");
                 }
             }
         } else {
             throw new Error(
-            'Array Length does not match number of Elements in CheckboxList'
-            )
+                "Array Length does not match number of Elements in CheckboxList"
+            );
         }
     }
 
@@ -277,12 +283,12 @@ export class CheckboxList extends CheckboxInput {
      */
     setChoices(choices) {
         for (let index in choices) {
-            if (this.value && typeof this.value[index] === 'undefined') {
-                this.value[index] = false
+            if (this.value && typeof this.value[index] === "undefined") {
+                this.value[index] = false;
             }
         }
 
-        this.choices = choices
+        this.choices = choices;
     }
 
     /**
@@ -290,7 +296,7 @@ export class CheckboxList extends CheckboxInput {
      * @returns {string}
      */
     getFieldId() {
-        return `${this.id}-checkbox`
+        return `${this.id}-checkbox`;
     }
 
     /**
@@ -298,7 +304,7 @@ export class CheckboxList extends CheckboxInput {
      * @returns {*}
      */
     getChoices() {
-        return this.choices
+        return this.choices;
     }
 
     /**
@@ -306,7 +312,7 @@ export class CheckboxList extends CheckboxInput {
      * @returns {NodeList}
      */
     getAllElements() {
-        return this.getElementWrapper().querySelectorAll('.mutt-field')
+        return this.getElementWrapper().querySelectorAll(".mutt-field");
     }
 
     /**
@@ -315,6 +321,6 @@ export class CheckboxList extends CheckboxInput {
      * @returns {*}
      */
     getElementByIndex(index) {
-        return this.getElementWrapper().querySelectorAll('.mutt-field')[index]
+        return this.getElementWrapper().querySelectorAll(".mutt-field")[index];
     }
 }

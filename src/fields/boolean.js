@@ -2,34 +2,34 @@
  * @file Boolean Field
  */
 
-'use strict'
+"use strict";
 
-import Mutt from '../index'
-import {Field} from './core'
+import Mutt from "../index";
+import { Field } from "./core";
 
 function toBool(value) {
-    if ((value === undefined) || (value === null)) {
-        return null
+    if (value === undefined || value === null) {
+        return null;
     }
 
-    if (typeof value === 'boolean') {
-        return value
+    if (typeof value === "boolean") {
+        return value;
     }
 
     switch (value.toLowerCase().trim()) {
-        case 'true':
-        case 'yes':
-        case '1':
-            return true
+        case "true":
+        case "yes":
+        case "1":
+            return true;
 
-        case 'false':
-        case 'no':
-        case '0':
+        case "false":
+        case "no":
+        case "0":
         case null:
-            return false
+            return false;
 
         default:
-            return Boolean(value)
+            return Boolean(value);
     }
 }
 
@@ -39,26 +39,26 @@ function toBool(value) {
  */
 export class BooleanField extends Field {
     /**
-    * Property - get/set value
-    */
+     * Property - get/set value
+     */
     get value() {
-        let value = this.widget.getValue()
+        let value = this.widget.getValue();
 
         // Widgets deal with the HTML value, which
         // can not represent a boolean. Coerce to
         // the expected type
-        return toBool(value)
+        return toBool(value);
     }
 
     set value(value) {
-        this.widget.setValue(value)
+        this.widget.setValue(value);
     }
 
     /**
-    * Get the widget for the field
-    * @returns {Widget}
-    */
+     * Get the widget for the field
+     * @returns {Widget}
+     */
     getWidget() {
-        return Mutt.config.getWidget('checkbox')
+        return Mutt.config.getWidget("checkbox");
     }
 }

@@ -1,6 +1,6 @@
 /**
-* @file Core Serializers
-*/
+ * @file Core Serializers
+ */
 
 /**
  * Base Validation Interface
@@ -8,12 +8,12 @@
  */
 export class Serializer {
     constructor(value, options = {}) {
-        this.value = value
-        this.options = options
+        this.value = value;
+        this.options = options;
     }
 
     serialize() {
-        return this.value
+        return this.value;
     }
 }
 
@@ -23,6 +23,6 @@ export class Serializer {
  */
 export class TrimSerializer extends Serializer {
     serialize() {
-        return this.value.toString().trim()
+        return this.value.toString().trim();
     }
 }

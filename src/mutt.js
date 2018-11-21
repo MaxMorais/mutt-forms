@@ -4,10 +4,10 @@
  * @copyright Bought By Many 2017
  */
 
-'use strict'
+"use strict";
 
-import Mutt from './index'
-import {Fieldset} from './fieldsets/core'
+import Mutt from "./index";
+import { Fieldset } from "./fieldsets/core";
 
 /**
  * Main Mutt form interface. This instance is used to build,
@@ -22,25 +22,25 @@ class MuttForm {
      * @param {object} [options={}] form configuration options
      */
     constructor(schema, options = {}) {
-        this.schema = schema
-        this.options = {}
-        this.callbacks = {}
+        this.schema = schema;
+        this.options = {};
+        this.callbacks = {};
 
-        if (options && options.hasOwnProperty('form')) {
-            this.options = options.form
+        if (options && options.hasOwnProperty("form")) {
+            this.options = options.form;
         }
 
-        this.mount = false
-        this.multipart = false
-        this.id = null
-        this.locked = false
+        this.mount = false;
+        this.multipart = false;
+        this.id = null;
+        this.locked = false;
 
-        this.form = null
-        this.fieldsets = []
-        this.buttons = {submit: null}
+        this.form = null;
+        this.fieldsets = [];
+        this.buttons = { submit: null };
 
         // Build the form from the config
-        this.build(schema, options)
+        this.build(schema, options);
     }
 
     /**
@@ -55,24 +55,26 @@ class MuttForm {
 
         // If fieldsets is specfied in the form options we are
         // going to attempt to build multiple ones
-        if (options.hasOwnProperty('fieldsets')) {
-            let fieldsetIndex = 0
+        if (options.hasOwnProperty("fieldsets")) {
+            let fieldsetIndex = 0;
 
             for (let fieldsetSpec of options.fieldsets) {
-                let fieldsetFields = null
-                let fieldsetLabel = null
+                let fieldsetFields = null;
+                let fieldsetLabel = null;
 
-                if (fieldsetSpec.hasOwnProperty('fields')) {
-                    fieldsetFields = fieldsetSpec.fields
+                if (fieldsetSpec.hasOwnProperty("fields")) {
+                    fieldsetFields = fieldsetSpec.fields;
                 }
 
-                if (fieldsetSpec.hasOwnProperty('fieldsets')) {
-                    options.fieldsets = fieldsetSpec.fieldsets
+                if (fieldsetSpec.hasOwnProperty("fieldsets")) {
+                    options.fieldsets = fieldsetSpec.fieldsets;
                 }
 
-                if (fieldsetSpec.options &&
-                    fieldsetSpec.options.hasOwnProperty('label')) {
-                    fieldsetLabel = fieldsetSpec.options.label
+                if (
+                    fieldsetSpec.options &&
+                    fieldsetSpec.options.hasOwnProperty("label")
+                ) {
+                    fieldsetLabel = fieldsetSpec.options.label;
                 }
 
                 let fieldset = Fieldset.new(
@@ -81,18 +83,15 @@ class MuttForm {
                     fieldsetFields,
                     `mutt-fieldset-${fieldsetIndex}`,
                     fieldsetLabel
-                )
+                );
 
-                this.fieldsets.push(fieldset)
-                fieldsetIndex++
+                this.fieldsets.push(fieldset);
+                fieldsetIndex++;
             }
         } else {
-            let fieldset = Fieldset.new(
-                schema,
-                options
-            )
+            let fieldset = Fieldset.new(schema, options);
 
-            this.fieldsets.push(fieldset)
+            this.fieldsets.push(fieldset);
         }
     }
 
@@ -102,26 +101,26 @@ class MuttForm {
      * default, as a merged object of all the data
      * @param {bool} [asList] Boolean to indicate if a list of fieldset
      * data is required. Default is to return a merged object.
-     * @returns {object} key/value data object for the form
+     * @return {object} key/value data object for the form
      */
     data(asList = false) {
         if (asList) {
-            let data = []
+            let data = [];
 
             for (let fieldset of this.fieldsets) {
-                data.push(fieldset.data())
+                data.push(fieldset.data());
             }
 
-            return data
+            return data;
         }
 
-        let data = {}
+        let data = {};
 
         for (let fieldset of this.fieldsets) {
-            data = Object.assign(data, fieldset.data())
+            data = Object.assign(data, fieldset.data());
         }
 
-        return data
+        return data;
     }
 
     /**
@@ -130,148 +129,148 @@ class MuttForm {
      */
     populate(data) {
         for (let fieldset of this.fieldsets) {
-            fieldset.populate(data)
+            fieldset.populate(data);
         }
     }
 
     /**
      * Render the form
      * @param {HTMLElement} mount Containing element for the Mutt Form
-     * @returns {Promise} a promise to be resolved once rendering
+     * @return {Promise} a promise to be resolved once rendering
      * is complete
      */
     render(mount) {
         // Save the mount point...
-        this.mount = mount
+        this.mount = mount;
 
         return new Promise((resolve, reject) => {
-            let formContainer = document.createDocumentFragment()
-            this.form = document.createElement('form')
+            let formContainer = document.createDocumentFragment();
+            this.form = document.createElement("form");
 
             if (this.id) {
-                this.form.setAttribute('id', this.id)
+                this.form.setAttribute("id", this.id);
             }
 
-            this.form.setAttribute('method', 'POST')
-            this.form.setAttribute('action', '')
-            this.form.setAttribute('class', 'mutt-form')
+            this.form.setAttribute("method", "POST");
+            this.form.setAttribute("action", "");
+            this.form.setAttribute("class", "mutt-form");
 
             if (this.multipart) {
-                this.form.setAttribute('enctype', 'multipart/form-data')
+                this.form.setAttribute("enctype", "multipart/form-data");
             }
 
             for (let fieldset of this.fieldsets) {
-                let fieldsetElement = fieldset.render()
-                this.form.appendChild(fieldsetElement)
+                let fieldsetElement = fieldset.render();
+                this.form.appendChild(fieldsetElement);
             }
 
             // Add form controls
-            let buttonClass = 'mutt-button'
-            let buttonText = 'Submit'
+            let buttonClass = "mutt-button";
+            let buttonText = "Submit";
 
             // Check for button overide options
-            if (this.options.hasOwnProperty('buttons')) {
-                if (this.options.buttons.hasOwnProperty('submit')) {
-                    if (this.options.buttons.submit.hasOwnProperty('class')) {
-                        let submitClass = this.options.buttons.submit.class
-                        buttonClass = buttonClass + ' ' + submitClass
+            if (this.options.hasOwnProperty("buttons")) {
+                if (this.options.buttons.hasOwnProperty("submit")) {
+                    if (this.options.buttons.submit.hasOwnProperty("class")) {
+                        let submitClass = this.options.buttons.submit.class;
+                        buttonClass = buttonClass + " " + submitClass;
                     }
 
-                    if (this.options.buttons.submit.hasOwnProperty('text')) {
-                        buttonText = this.options.buttons.submit.text
+                    if (this.options.buttons.submit.hasOwnProperty("text")) {
+                        buttonText = this.options.buttons.submit.text;
                     }
                 }
             }
 
-            let buttonWrapper = document.createElement('div')
-            buttonWrapper.setAttribute('class', 'mutt-button-wrapper')
+            let buttonWrapper = document.createElement("div");
+            buttonWrapper.setAttribute("class", "mutt-button-wrapper");
 
             // Add any aditional buttons specified in the options
-            if (this.options.hasOwnProperty('buttons')) {
+            if (this.options.hasOwnProperty("buttons")) {
                 for (let buttonName of Object.keys(this.options.buttons)) {
-                    if (buttonName === 'submit') {
+                    if (buttonName === "submit") {
                         // We always default this
-                        continue
+                        continue;
                     }
 
-                    let buttonSpec = this.options.buttons[buttonName]
+                    let buttonSpec = this.options.buttons[buttonName];
 
                     // Setup a new button
-                    let button = document.createElement('button')
-                    button.setAttribute('name', buttonName)
-                    button.setAttribute('class', buttonSpec.class)
-                    button.setAttribute('type', 'button')
-                    button.textContent = buttonSpec.text
-                    button.onclick = buttonSpec.callback
+                    let button = document.createElement("button");
+                    button.setAttribute("name", buttonName);
+                    button.setAttribute("class", buttonSpec.class);
+                    button.setAttribute("type", "button");
+                    button.textContent = buttonSpec.text;
+                    button.onclick = buttonSpec.callback;
 
-                    this.buttons[buttonName] = button
+                    this.buttons[buttonName] = button;
 
-                    buttonWrapper.appendChild(button)
+                    buttonWrapper.appendChild(button);
                 }
             }
 
-            let submitButton = document.createElement('button')
-            submitButton.setAttribute('class', buttonClass)
-            submitButton.setAttribute('type', 'submit')
-            submitButton.textContent = buttonText
-            submitButton.onclick = (e) => {
-                this.submit(e)
-                return false
-            }
+            let submitButton = document.createElement("button");
+            submitButton.setAttribute("class", buttonClass);
+            submitButton.setAttribute("type", "submit");
+            submitButton.textContent = buttonText;
+            submitButton.onclick = e => {
+                this.submit(e);
+                return false;
+            };
 
-            this.buttons.submit = submitButton
-            buttonWrapper.appendChild(submitButton)
+            this.buttons.submit = submitButton;
+            buttonWrapper.appendChild(submitButton);
 
-            this.form.appendChild(buttonWrapper)
+            this.form.appendChild(buttonWrapper);
 
             // Build the form and render to the viewport
-            formContainer.appendChild(this.form)
-            this.mount.appendChild(formContainer)
+            formContainer.appendChild(this.form);
+            this.mount.appendChild(formContainer);
 
             // Form has been renderd to the stage, call
             // the post render hooks
             for (let fieldset of this.fieldsets) {
-                fieldset.postRender()
+                fieldset.postRender();
             }
 
-            resolve(this)
-        })
+            resolve(this);
+        });
     }
 
     /**
      * Remove the form from the stage
-     * @returns {bool} Confirmation of destruction
+     * @return {bool} Confirmation of destruction
      */
     destroy() {
         if (this.mount) {
-            let form = this.mount.querySelector('form')
-            this.mount.removeChild(form)
-            return true
+            let form = this.mount.querySelector("form");
+            this.mount.removeChild(form);
+            return true;
         }
 
-        return false
+        return false;
     }
 
     /**
      * Validate the form
-     * @returns {bool} response to the validation request
+     * @return {bool} response to the validation request
      */
     validate() {
-        let valid = true
-        let errors = []
+        let valid = true;
+        let errors = [];
 
         for (let fieldset of this.fieldsets) {
             if (!fieldset.validate()) {
-                errors.push(fieldset.errors)
-                valid = false
+                errors.push(fieldset.errors);
+                valid = false;
             }
         }
 
         Mutt.logger(
             `Validation -> Status ${valid} -> ${JSON.stringify(errors)}`
-        )
+        );
 
-        return valid
+        return valid;
     }
 
     /**
@@ -279,49 +278,49 @@ class MuttForm {
      */
     refreshValidationState() {
         for (let fieldset of this.fieldsets) {
-            fieldset.refreshValidationState()
+            fieldset.refreshValidationState();
         }
     }
 
     /**
      * Submit handler for the form
      * @param {Event} event Event triggering the submission
-     * @returns {bool} success or failure of submission
+     * @return {bool} success or failure of submission
      */
     submit(event) {
         // We always validate prior to validateion
-        let valid = false
+        let valid = false;
 
         try {
-            valid = this.validate()
+            valid = this.validate();
         } catch (e) {
-            Mutt.logger('Unable to validate prior to submit!', e)
-            return false
+            Mutt.logger("Unable to validate prior to submit!", e);
+            return false;
         }
 
         if (valid) {
-            Mutt.logger('Submit form')
+            Mutt.logger("Submit form");
 
-            if (this.callbacks.hasOwnProperty('submit')) {
-                this.callbacks['submit'](this.data(), event)
+            if (this.callbacks.hasOwnProperty("submit")) {
+                this.callbacks["submit"](this.data(), event);
             } else {
-                this.form.submit()
+                this.form.submit();
             }
 
-            return true
+            return true;
         }
 
-        return false
+        return false;
     }
 
     /**
      * Lock a form, this changes all of the fields to a read only state
      */
     lock() {
-        Mutt.logger('Locking form')
+        Mutt.logger("Locking form");
 
         for (let fieldset of this.fieldsets) {
-            fieldset.lock()
+            fieldset.lock();
         }
     }
 
@@ -330,10 +329,10 @@ class MuttForm {
      * editable state
      */
     unlock() {
-        Mutt.log('Unlocking form')
+        Mutt.log("Unlocking form");
 
         for (let fieldset of this.fieldsets) {
-            fieldset.unlock()
+            fieldset.unlock();
         }
     }
 
@@ -342,8 +341,8 @@ class MuttForm {
      * @param {function} callback Callback function for form submission
      */
     on(hook, callback) {
-        this.callbacks[hook] = callback
-        return this
+        this.callbacks[hook] = callback;
+        return this;
     }
 
     /**
@@ -351,15 +350,15 @@ class MuttForm {
      * @param {string} formId ID for a form
      */
     setFormId(formId) {
-        this.id = formId
+        this.id = formId;
     }
 
     /**
      * Get the form ID
-     * @returns {string} ID for a form
+     * @return {string} ID for a form
      */
     getFormId() {
-        return this.id
+        return this.id;
     }
 
     /**
@@ -374,7 +373,7 @@ class MuttForm {
         // supported. Errors are added to both fields in this
         // instance.
         for (let fieldset of this.fieldsets) {
-            fieldset.setFieldErrors(errors)
+            fieldset.setFieldErrors(errors);
         }
     }
 
@@ -386,13 +385,13 @@ class MuttForm {
     getFieldByPath(path) {
         // To find a field we need to inspect each fieldset
         for (let fieldset of this.fieldsets) {
-            let field = fieldset.getFieldByPath(path)
+            let field = fieldset.getFieldByPath(path);
 
             if (field) {
-                return field
+                return field;
             }
         }
     }
 }
 
-export default MuttForm
+export default MuttForm;
