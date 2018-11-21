@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "eg2.vscode-npm-script",
+    "christian-kohler.npm-intellisense",
+    "orta.vscode-jest",
+    "wix.vscode-import-cost",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "joelday.docthis"
+  ]
+}

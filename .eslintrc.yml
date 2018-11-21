@@ -1,7 +1,0 @@
----
-extends: google
-parser: babel-eslint
-rules:
-  semi: ["off"]
-  indent: ['error', 4]
-  require-jsdoc: ["off"]
