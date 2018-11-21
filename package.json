@@ -72,7 +72,7 @@
   "scripts": {
     "build": "rollup -c",
     "test": "jest",
-    "lint": "eslint --ext .js src",
+    "lint": "eslint .",
     "prepublish": "npm run build"
   }
 }

@@ -4,6 +4,9 @@ module.exports = {
   "extends": ["eslint:recommended", "prettier", "prettier/standard"],
   "plugins": ["prettier"],
   "parser": "babel-eslint",
+  "env": {
+      "browser": true
+  },
   "rules": {
     "require-jsdoc": ["warn", {
       "require": {
