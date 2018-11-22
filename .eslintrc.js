@@ -1,8 +1,7 @@
 "use strict"
 
 module.exports = {
-  "extends": ["eslint:recommended", "prettier", "prettier/standard"],
-  "plugins": ["prettier"],
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
   "parser": "babel-eslint",
   "env": {
       "es6": true,
@@ -18,6 +17,5 @@ module.exports = {
           "FunctionExpression": true
       }
     }],
-    "prettier/prettier": "error"
   }
 }
